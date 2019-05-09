@@ -4,4 +4,6 @@ import json
 
 class GraphHopper(object):
 
-    def __init__(self, APIkey):
+    def __init__(self, Ak):
+        self.APIkey = GraphHopper.Ak
+        
