@@ -13,7 +13,13 @@ class GraphHopper(object):
     #initialisation de la classe
 
 
+    def geocode(self, adresse):
+        # prend en entrée une adresse en chaîne de caractère
+        # retourne un dictionnaire
 
+    def reverse_geocode(self ,lat, long):
+        # prend en entrée la lattitude et la longitude
+        # retourne un dictionnaire
 
 
 fp1 = open("credentials.json", "r" , encoding = "utf-8")
@@ -21,4 +27,5 @@ dossiercle = json.load(fp1)
 key_access = dossiercle["graphhopper"]
 
 G1 = GraphHopper(key_access)
+print(G1)
 
