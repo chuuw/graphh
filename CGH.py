@@ -13,23 +13,26 @@ class GraphHopper(object):
     #initialisation de la classe
 
 
-    def geocode(self, adresse):
+    def geocode(self, adresse, limite=1):
         # prend en entrée une adresse en chaîne de caractère
         # retourne un dictionnaire
+        url1=GraphHopper.url+"geocode?q="+adresse.replace(" ","+")+"&limit="+str(limite)+"&key="+self.APIkey
+        fp = urllib.request.urlopen(url1)
+        return fp.read().decode("ascii")
 
-    def reverse_geocode(self ,point):
+    #def reverse_geocode(self ,point):
         # prend en entrée un tuple (la lattitude et la longitude)
         # retourne un dictionnaire
 
-    def itinerary(self, point1, point2, vehicule="car", limite=1):
+    #def itinerary(self, point1, point2, vehicule="car", limite=1):
         # prend en entrée 2 tuples (lat, long)
         # retourne un dictionnaire
 
-    def distance(self):
+    #def distance(self):
 
-    def time(self):
+    #def time(self):
 
-    def repr_itinerary(self):
+    #def repr_itinerary(self):
 
 
 fp1 = open("credentials.json", "r" , encoding = "utf-8")
@@ -38,4 +41,7 @@ key_access = dossiercle["graphhopper"]
 
 G1 = GraphHopper(key_access)
 print(G1)
+
+print(G1.geocode("4 allée du clos prioul"))
+      
 
