@@ -1,5 +1,7 @@
 import urllib.request
 import json
+import urllib.parse
+import unicodedata
 
 # url complet :
 # https://graphhopper.com/api/1/route?point=51.131,12.414&point=48.224,3.867&
@@ -16,9 +18,11 @@ class GraphHopper(object):
     def geocode(self, adresse, limite=1):
         # prend en entrée une adresse en chaîne de caractère
         # retourne un dictionnaire
+        adresse = str(unicodedata.normalize('NFKD', adresse).encode('ascii', 'ignore'))
         url1=GraphHopper.url+"geocode?q="+adresse.replace(" ","+")+"&limit="+str(limite)+"&key="+self.APIkey
         fp = urllib.request.urlopen(url1)
-        return fp.read().decode("ascii")
+        dico = fp.read().decode("utf-8")
+        return dico
 
     #def reverse_geocode(self ,point):
         # prend en entrée un tuple (la lattitude et la longitude)
