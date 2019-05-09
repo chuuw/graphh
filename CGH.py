@@ -14,3 +14,11 @@ class GraphHopper(object):
 
 
 
+
+
+fp1 = open("credentials.json", "r" , encoding = "utf-8")
+dossiercle = json.load(fp1)
+key_access = dossiercle["graphhopper"]
+
+G1 = GraphHopper(key_access)
+
