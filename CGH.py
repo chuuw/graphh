@@ -17,8 +17,12 @@ class GraphHopper(object):
         # prend en entrée une adresse en chaîne de caractère
         # retourne un dictionnaire
 
-    def reverse_geocode(self ,lat, long):
-        # prend en entrée la lattitude et la longitude
+    def reverse_geocode(self ,point):
+        # prend en entrée un tuple (la lattitude et la longitude)
+        # retourne un dictionnaire
+
+    def itinerary(self, point1, point2):
+        # prend en entrée 2 tuples (lat, long)
         # retourne un dictionnaire
 
 
