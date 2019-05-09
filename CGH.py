@@ -18,7 +18,7 @@ class GraphHopper(object):
     def geocode(self, adresse, limite=1):
         # prend en entrée une adresse en chaîne de caractère
         # retourne un dictionnaire
-        adresse = str(unicodedata.normalize('NFKD', adresse).encode('ascii', 'ignore'))
+        adresse = str(unicodedata.normalize('NFKD', str(adresse)).encode('ascii', 'ignore'))
         url1=GraphHopper.url+"geocode?q="+adresse.replace(" ","+")+"&limit="+str(limite)+"&key="+self.APIkey
         fp = urllib.request.urlopen(url1)
         dico = fp.read().decode("utf-8")
@@ -46,6 +46,6 @@ key_access = dossiercle["graphhopper"]
 G1 = GraphHopper(key_access)
 print(G1)
 
-print(G1.geocode("4 allée du clos prioul"))
+print(G1.geocode(9))
       
 
