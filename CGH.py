@@ -28,9 +28,13 @@ class GraphHopper(object):
         # prend en entrée un tuple (la lattitude et la longitude)
         # retourne un dictionnaire
 
-    #def itinerary(self, point1, point2, vehicule="car", limite=1):
+    def itinerary(self, point1, point2, vehicle="car"):
         # prend en entrée 2 tuples (lat, long)
         # retourne un dictionnaire
+        url = GraphHopper.url + "route?point=" + str(point1[0])+ "," + str(point1[1]) + "&point=" + str(point2[0]) + "," + str(point2[1]) + "&vehicle=" + vehicle + "&key=" + self.APIkey
+        print(url)
+        fp = urllib.request.urlopen(url)
+        return json.load(fp)
 
     #def distance(self):
 
@@ -45,7 +49,10 @@ key_access = dossiercle["graphhopper"]
 
 G1 = GraphHopper(key_access)
 print(G1)
-
+point1 = (48.224,3.867)
+point2 = (51.131,12.414)
 print(G1.geocode(9))
+print(G1.itinerary(point1,point2))
+
       
 
