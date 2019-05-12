@@ -37,9 +37,20 @@ class GraphHopper(object):
                 fp = urllib.request.urlopen(url)
                 return json.load(fp)
 
-    #def distance(self):
+    def distance(self, point1, point2):
+        if CGHError.pointerror(point1) and CGHError.pointerror(point2):
+            url = GraphHopper.url + "route?point=" + str(point1[0]) + "," + str(point1[1]) + "&point=" + str(point2[0]) + "," + str(point2[1]) + "&key=" + self.APIkey
+            fp = urllib.request.urlopen(url)
+            dic=json.load(fp)
+            return "distance : "+str(dic["paths"][0]["distance"])+" m"
 
-    #def time(self):
+
+    def time(self, point1, point2, vehicle="car"):
+        if CGHError.pointerror(point1) and CGHError.pointerror(point2):
+            url = GraphHopper.url + "route?point=" + str(point1[0]) + "," + str(point1[1]) + "&point=" + str(point2[0]) + "," + str(point2[1]) + "&vehicle=" + vehicle +  "&key=" + self.APIkey
+            fp = urllib.request.urlopen(url)
+            dic=json.load(fp)
+            return "time : "+str(dic["paths"][0]["time"])+" ms"
 
     #def repr_itinerary(self):
 
@@ -49,11 +60,13 @@ dossiercle = json.load(fp1)
 key_access = dossiercle["graphhopper"]
 
 G1 = GraphHopper(key_access)
-print(G1)
-point1 = [48.121410, -1.703526]
+#print(G1)
+point1 = (48.121410, -1.703526)
 point2 = (48.114858, -1.680012)
-print(G1.geocode(9))
-print(G1.itinerary(point1,point2, vehicle="eft"))
+#print(G1.geocode(9))
+#print(G1.itinerary(point1,point2, vehicle="eft"))
+print(G1.distance(point1,point2))
+print(G1.time(point1, point2))
 
       
 
