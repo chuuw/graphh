@@ -1,7 +1,7 @@
 import urllib.request
 import json
-import urllib.parse
 import unicodedata
+import CGHError
 
 # url complet :
 # https://graphhopper.com/api/1/route?point=51.131,12.414&point=48.224,3.867&
@@ -31,10 +31,11 @@ class GraphHopper(object):
     def itinerary(self, point1, point2, vehicle="car"):
         # prend en entrée 2 tuples (lat, long)
         # retourne un dictionnaire
-        url = GraphHopper.url + "route?point=" + str(point1[0])+ "," + str(point1[1]) + "&point=" + str(point2[0]) + "," + str(point2[1]) + "&vehicle=" + vehicle + "&key=" + self.APIkey
-        print(url)
-        fp = urllib.request.urlopen(url)
-        return json.load(fp)
+        if CGHError.pointerror(point1) and CGHError.pointerror(point2):
+            url = GraphHopper.url + "route?point=" + str(point1[0])+ "," + str(point1[1]) + "&point=" + str(point2[0]) + "," + str(point2[1]) + "&vehicle=" + vehicle + "&key=" + self.APIkey
+            if CGHError.CGHError(url):
+                fp = urllib.request.urlopen(url)
+                return json.load(fp)
 
     #def distance(self):
 
@@ -49,10 +50,10 @@ key_access = dossiercle["graphhopper"]
 
 G1 = GraphHopper(key_access)
 print(G1)
-point1 = (48.224,3.867)
-point2 = (51.131,12.414)
+point1 = [48.121410, -1.703526]
+point2 = (48.114858, -1.680012)
 print(G1.geocode(9))
-print(G1.itinerary(point1,point2))
+print(G1.itinerary(point1,point2, vehicle="eft"))
 
       
 
