@@ -1,16 +1,19 @@
 from urllib.error import HTTPError
 import urllib.request
+import sys
 
 def pointerror(point):
   try:
    for coordinate in point: 
      float(coordinate)
   except ValueError:
-    print("coordinate are not valid")
+    print("Error: coordinate are not valid")
+    sys.exit()
     return False
   else: 
     if not len(point)==2:
-      print("point need be lat and long")
+      print("Error: point need be lat and long")
+      sys.exit()
       return False
   return True
 
@@ -20,19 +23,23 @@ def CGHError(url):
     contenu=fp.read().decode("utf-8")
   except HTTPError as e:
     if e.code == 400:
-      print("request is not correct")
-      return False
+      print("Error: argument not correct")
+      print(APIKeyRemaining(e), "remaining credits")
     elif e.code == 401:
-      print("key error")
-      return False
+      print("Error: key error")
     elif e.code == 429:
-      print("API limit reached")
-      return False
+      print("Error: API limit reached")
     elif e.code == 500:
-      print("Internal server error")
-      return False
+      print("Error: Internal server error")
+      print(APIKeyRemaining(e), "remaining credits")
     elif e.code == 501:
-      print("Vehicle error")
-      return False
+      print("Error: Vehicle error")
+      print(APIKeyRemaining(e), "remaining credits")
+    sys.exit()
   return True
-    
+
+def APIKeyRemaining(error):
+  header = str(error.headers).replace("\n", " ").split(" ")
+  print(header)
+  indice = header.index("X-RateLimit-Remaining:")
+  return header[indice+1]
