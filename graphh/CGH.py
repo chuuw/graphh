@@ -24,9 +24,14 @@ class GraphHopper(object):
         dico = fp.read().decode("utf-8")
         return dico
 
-    #def reverse_geocode(self ,point):
+    def reverse_geocode(self, latlong):
         # prend en entrée un tuple (la lattitude et la longitude)
         # retourne un dictionnaire
+        url2=GraphHopper.url+"geocode?point="+str(latlong[0])+","+str(latlong[1])+"&reverse=true&key="+self.APIkey
+        fp = urllib.request.urlopen(url2)
+        d_res = json.load(fp)
+        return d_res
+
 
     def itinerary(self, point1, point2, vehicle="car"):
         # prend en entrée 2 tuples (lat, long)
@@ -68,5 +73,9 @@ point2 = (48.114858, -1.680012)
 print(G1.distance(point1,point2))
 print(G1.time(point1, point2))
 
-      
-
+#test reverse_geocode
+print(G1.reverse_geocode((48.1572091,-1.6853144)))
+d=G1.reverse_geocode((48.1572091,-1.6853144))
+#for elt in d["hits"]:
+#    print(elt)
+print(d["hits"][0]["street"])
