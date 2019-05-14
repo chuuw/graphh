@@ -14,7 +14,7 @@ class GraphHopper(object):
         self.APIkey = Ak
     #initialisation de la classe
 
-    def url(self, api, l_parameters):
+    def url_handle(self, api, l_parameters):
         #api: name of the api used
         #l_parameters: list of parameters to insert in the url
         #example of parameter:
@@ -23,7 +23,7 @@ class GraphHopper(object):
         for p in l_parameters:
             complete_url += "&{}".format(p)
         fp = urllib.request.urlopen(complete_url)
-        return fp.read().decode("utf-8")
+        return json.load(fp)
 
     def geocode(self, adresse, limite=1):
         # prend en entrée une adresse en chaîne de caractère
