@@ -31,16 +31,17 @@ class GraphHopper(object):
         adresse = str(unicodedata.normalize('NFKD', str(adresse)).encode('ascii', 'ignore'))
         url1=GraphHopper.url+"geocode?q="+adresse.replace(" ","+")+"&limit="+str(limite)+"&key="+self.APIkey
         fp = urllib.request.urlopen(url1)
-        dico = fp.read().decode("utf-8")
+        dico = json.load(fp)
         return dico
 
     def reverse_geocode(self, latlong):
         # prend en entrée un tuple (la lattitude et la longitude)
         # retourne un dictionnaire
-        url2=GraphHopper.url+"geocode?point="+str(latlong[0])+","+str(latlong[1])+"&reverse=true&key="+self.APIkey
-        fp = urllib.request.urlopen(url2)
-        d_res = json.load(fp)
-        return d_res
+        l_param=[]
+        l_param.append("point={},{}".format(latlong[0],latlong[1]))
+        l_param.append("key={}".format(self.APIkey))
+        l_param.append("reverse=true")
+        return self.url_handle("geocode",l_param)
 
 
     def itinerary(self, point1, point2, vehicle="car"):
