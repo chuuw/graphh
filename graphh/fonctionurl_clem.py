@@ -14,14 +14,13 @@ class GraphHopper(object):
         self.APIkey = Ak
     #initialisation de la classe
     def formepoint(self, point):
-        return "{},{}".format(point[0],point[1])
+        return str("{},{}".format(point[0],point[1]))
         
     def url_def(self, listedargument):
         url = GraphHopper.url + listedargument[0] + "?"
         for argument in listedargument[1:]:
             url += argument + "&"
         url += "key=" + self.APIkey
-
         fp = urllib.request.urlopen(url)
         d_res = json.load(fp)
         return d_res
@@ -29,12 +28,11 @@ class GraphHopper(object):
     def url_def2(self, api, dicodargument):
         url = GraphHopper.url + api + "?"
         for argument in dicodargument.keys():
-            if type(dicodargument[argument]) == tuple or list:
+            if type(dicodargument[argument]) is not str:
                 for arg in dicodargument[argument]:
                     url += "{}={}&".format(argument, arg)
             else:
                 url += "{}={}&".format(argument, dicodargument[argument])
-            
         url += "key=" + self.APIkey
         fp = urllib.request.urlopen(url)
         d_res = json.load(fp)
