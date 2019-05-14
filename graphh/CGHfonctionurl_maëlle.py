@@ -14,11 +14,12 @@ class GraphHopper(object):
         self.APIkey = Ak
     #initialisation de la classe
 
-    def url(self, l_parameters):
+    def url(self, api, l_parameters):
+        #api: name of the api used
         #l_parameters: list of parameters to insert in the url
         #example of parameter:
         #"point=51.131,12.414" or "locale=en"
-        complete_url = GraphHopper.url
+        complete_url = GraphHopper.url + api + "?"
         for p in l_parameters:
             complete_url += "&{}".format(p)
         fp = urllib.request.urlopen(complete_url)
