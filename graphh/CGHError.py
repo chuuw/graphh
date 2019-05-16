@@ -2,17 +2,21 @@ from urllib.error import HTTPError
 import urllib.request
 import sys
 
-def valid_point(point):
+def valid_point(point): # point = (lat, long)
   try:
    for coordinate in point: 
      float(coordinate)
   except ValueError:
-    print("Error: coordinate are not valid")
+    print("Error: coordinates are not valid")
     sys.exit()
     return False
   else: 
     if not len(point)==2:
-      print("Error: point need be lat and long")
+      print("Error: point need to be lat and long")
+      sys.exit()
+      return False
+    elif not (-90 <= point[0] <= 90 and -180 <= point[1] <= 180) :
+      print("Error: latitude or longitude value is not valid")
       sys.exit()
       return False
   return True
