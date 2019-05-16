@@ -2,7 +2,7 @@ from urllib.error import HTTPError
 import urllib.request
 import sys
 
-def pointerror(point):
+def valid_point(point):
   try:
    for coordinate in point: 
      float(coordinate)

@@ -33,26 +33,26 @@ class GraphHopper(object):
         return d_res
 
 
-    def itinerary(self, point1, point2, vehicle="car"):
+    def itinerary(self, latlong1, latlong2, vehicle="car"):
         # prend en entrée 2 tuples (lat, long)
         # retourne un dictionnaire
-        if CGHError.pointerror(point1) and CGHError.pointerror(point2):
-            url = GraphHopper.url + "route?point=" + str(point1[0])+ "," + str(point1[1]) + "&point=" + str(point2[0]) + "," + str(point2[1]) + "&vehicle=" + vehicle + "&key=" + self.APIkey
+        if CGHError.valid_point(latlong1) and CGHError.valid_point(latlong2):
+            url = GraphHopper.url + "route?point=" + str(latlong1[0])+ "," + str(latlong1[1]) + "&point=" + str(latlong2[0]) + "," + str(latlong2[1]) + "&vehicle=" + vehicle + "&key=" + self.APIkey
             if CGHError.CGHError(url):
                 fp = urllib.request.urlopen(url)
                 return json.load(fp)
 
-    def distance(self, point1, point2):
-        if CGHError.pointerror(point1) and CGHError.pointerror(point2):
-            url = GraphHopper.url + "route?point=" + str(point1[0]) + "," + str(point1[1]) + "&point=" + str(point2[0]) + "," + str(point2[1]) + "&key=" + self.APIkey
+    def distance(self, latlong1, latlong2):
+        if CGHError.valid_point(latlong1) and CGHError.valid_point(latlong2):
+            url = GraphHopper.url + "route?point=" + str(latlong1[0]) + "," + str(latlong1[1]) + "&point=" + str(latlong2[0]) + "," + str(latlong2[1]) + "&key=" + self.APIkey
             fp = urllib.request.urlopen(url)
             dic=json.load(fp)
             return "distance : "+str(dic["paths"][0]["distance"])+" m"
 
 
-    def time(self, point1, point2, vehicle="car"):
-        if CGHError.pointerror(point1) and CGHError.pointerror(point2):
-            url = GraphHopper.url + "route?point=" + str(point1[0]) + "," + str(point1[1]) + "&point=" + str(point2[0]) + "," + str(point2[1]) + "&vehicle=" + vehicle +  "&key=" + self.APIkey
+    def time(self, latlong1, latlong2, vehicle="car"):
+        if CGHError.valid_point(latlong1) and CGHError.valid_point(latlong2):
+            url = GraphHopper.url + "route?point=" + str(latlong1[0]) + "," + str(latlong1[1]) + "&point=" + str(latlong2[0]) + "," + str(latlong2[1]) + "&vehicle=" + vehicle +  "&key=" + self.APIkey
             fp = urllib.request.urlopen(url)
             dic=json.load(fp)
             return "time : "+str(dic["paths"][0]["time"])+" ms"
