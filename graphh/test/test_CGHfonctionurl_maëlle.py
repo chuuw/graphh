@@ -1,7 +1,7 @@
 import urllib.request
 import json
 import unicodedata
-#import CGHError
+import CGHError
 
 # url complet :
 # https://graphhopper.com/api/1/route?point=51.131,12.414&point=48.224,3.867&

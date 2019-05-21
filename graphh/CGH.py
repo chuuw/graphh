@@ -14,23 +14,39 @@ class GraphHopper(object):
         self.APIkey = Ak
     #initialisation de la classe
 
+    def url_handle(self, api, l_parameters):
+        # api: name of the api used
+        # l_parameters: list of parameters to insert in the url
+        # example of parameter:
+        # "point=51.131,12.414" or "locale=en"
+        print(l_parameters)
+        complete_url = GraphHopper.url + api + "?"
+        for p in l_parameters:
+            complete_url += "&{}".format(p)
+        complete_url += "&key=" + self.APIkey
+        if CGHError.CGHError(complete_url):
+            fp = urllib.request.urlopen(complete_url)
+            return json.load(fp)
 
-    def geocode(self, adresse, limite=1):
+    def geocode(self, address, limit=1):
         # prend en entrée une adresse en chaîne de caractère
         # retourne un dictionnaire
-        adresse = str(unicodedata.normalize('NFKD', str(adresse)).encode('ascii', 'ignore'))
-        url1=GraphHopper.url+"geocode?q="+adresse.replace(" ","+")+"&limit="+str(limite)+"&key="+self.APIkey
+        adresse = str(unicodedata.normalize('NFKD', str(address)).encode('ascii', 'ignore'))
+        url1=GraphHopper.url+"geocode?q="+adresse.replace(" ","+")+"&limit="+str(limit)+"&key="+self.APIkey
         fp = urllib.request.urlopen(url1)
         dico = fp.read().decode("utf-8")
         return dico
 
     def reverse_geocode(self, latlong):
-        # prend en entrée un tuple (la lattitude et la longitude)
-        # retourne un dictionnaire
-        url2=GraphHopper.url+"geocode?point="+str(latlong[0])+","+str(latlong[1])+"&reverse=true&key="+self.APIkey
-        fp = urllib.request.urlopen(url2)
-        d_res = json.load(fp)
-        return d_res
+        """
+        :param latlong:
+        :return dictionary:
+        """
+        l_param = []
+        if CGHError.valid_point(latlong):
+            l_param.append("point={},{}".format(latlong[0], latlong[1]))
+        l_param.append("reverse=true")
+        return self.url_handle("geocode", l_param)
 
 
     def itinerary(self, latlong1, latlong2, vehicle="car"):

@@ -1,6 +1,7 @@
 from urllib.error import HTTPError
 import urllib.request
 import sys
+import json
 
 def valid_point(point): # point = (lat, long)
   try:
@@ -24,7 +25,7 @@ def valid_point(point): # point = (lat, long)
 def CGHError(url):
   try:
     fp=urllib.request.urlopen(url)
-    contenu=fp.read().decode("utf-8")
+    contenu=json.load(fp)
   except HTTPError as e:
     if e.code == 400:
       print("Error: argument not correct")
