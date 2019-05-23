@@ -29,8 +29,11 @@ class GraphHopper(object):
             return json.load(fp)
 
     def geocode(self, address, limit=1):
-        # prend en entrée une adresse en chaîne de caractère
-        # retourne un dictionnaire
+        """
+        :param address:
+        :param limit:
+        :return dictionary:
+        """
         a = str(unicodedata.normalize('NFKD', str(address)).encode('ascii', 'ignore'))
         l_param = []
         l_param.append("q={}".format(a.replace(" ", "+")))
@@ -49,13 +52,19 @@ class GraphHopper(object):
         return self.url_handle("geocode", l_param)
 
     def itinerary(self, latlong1, latlong2, vehicle="car"):
-        # prend en entrée 2 tuples (lat, long)
-        # retourne un dictionnaire
+        """
+        :param latlong1:
+        :param latlong2:
+        :param vehicle:
+        :return dictionary:
+        """
+        l_param = []
         if CGHError.valid_point(latlong1) and CGHError.valid_point(latlong2):
-            url = GraphHopper.url + "route?point=" + str(latlong1[0])+ "," + str(latlong1[1]) + "&point=" + str(latlong2[0]) + "," + str(latlong2[1]) + "&vehicle=" + vehicle + "&key=" + self.APIkey
-            if CGHError.CGHError(url):
-                fp = urllib.request.urlopen(url)
-                return json.load(fp)
+            l_param.append("point={},{}".format(latlong1[0], latlong1[1]))
+            l_param.append("point={},{}".format(latlong2[0], latlong2[1]))
+        if CGHError.valid_vehicle(vehicle):
+            l_param.append("vehicle={}".format(vehicle))
+        return self.url_handle("route", l_param)
 
     def distance(self, latlong1, latlong2):
         if CGHError.valid_point(latlong1) and CGHError.valid_point(latlong2):
