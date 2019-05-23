@@ -24,7 +24,11 @@ def valid_point(point):  # point = (lat, long)
   return True
 
 def valid_vehicle(vehicle):
-  l_vehicle = ["car", "bike"]
+  l_vehicle = [
+      "car", "small_truck", "truck",
+      "scooter", "foot", "hike",
+      "bike", "mtb", "racingbike"
+      ]
   if vehicle in l_vehicle:
     return True
   else:
