@@ -35,6 +35,14 @@ def valid_vehicle(vehicle):
     print("Error: wrong vehicle")
     sys.exit()
 
+def valid_locale(locale):
+  l_locale = ["en", "fr", "de", "it"]
+  if locale in l_locale:
+    return True
+  else:
+    print("Error: wrong language")
+    sys.exit()
+
 def CGHError(url):
   try:
     fp=urllib.request.urlopen(url)

@@ -3,11 +3,6 @@ import json
 import unicodedata
 import CGHError
 
-# complete url :
-# https://graphhopper.com/api/1/route?point=51.131,12.414&point=48.224,3.867&
-# vehicle=ezfke&locale=de&calc_points=false&key=1620b7ee-90b2-4daa-9ef5-4aba2d279978
-
-
 class GraphHopper(object):
     url = "https://graphhopper.com/api/1/"
 
@@ -28,7 +23,7 @@ class GraphHopper(object):
             fp = urllib.request.urlopen(complete_url)
             return json.load(fp)
 
-    def geocode(self, address, limit=1):
+    def geocode(self, address, limit=1, locale = "en"):
         """
         :param address:
         :param limit:
@@ -38,6 +33,8 @@ class GraphHopper(object):
         l_param = []
         l_param.append("q={}".format(a.replace(" ", "+")))
         l_param.append("limit={}".format(str(limit)))
+        if CGHError.valid_locale(locale):
+            l_param.append("locale={}".format(locale))
         return self.url_handle("geocode",l_param)
 
     def reverse_geocode(self, latlong):
@@ -51,7 +48,7 @@ class GraphHopper(object):
         l_param.append("reverse=true")
         return self.url_handle("geocode", l_param)
 
-    def itinerary(self, latlong1, latlong2, vehicle="car"):
+    def itinerary(self, latlong1, latlong2, vehicle="car", locale="en"):
         """
         :param latlong1:
         :param latlong2:
@@ -64,6 +61,8 @@ class GraphHopper(object):
             l_param.append("point={},{}".format(latlong2[0], latlong2[1]))
         if CGHError.valid_vehicle(vehicle):
             l_param.append("vehicle={}".format(vehicle))
+        if CGHError.valid_locale(locale):
+            l_param.append("locale={}".format(locale))
         return self.url_handle("route", l_param)
 
     def distance(self, latlong1, latlong2):
