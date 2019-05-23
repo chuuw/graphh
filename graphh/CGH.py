@@ -19,7 +19,6 @@ class GraphHopper(object):
         # l_parameters: list of parameters to insert in the url
         # example of parameter:
         # "point=51.131,12.414" or "locale=en"
-        print(l_parameters)
         complete_url = GraphHopper.url + api + "?"
         for p in l_parameters:
             complete_url += "&{}".format(p)
