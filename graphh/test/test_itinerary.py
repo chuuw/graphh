@@ -12,4 +12,6 @@ G1 = CGH.GraphHopper(key_access)
 point1 = (48.121410, -1.703526)
 point2 = (48.114858, -1.680012)
 
-print(G1.itinerary(point1,point2))
+#print(G1.itinerary(point1,point2))
+print(G1.time(point2,point1))
+print(G1.distance(point1,point2))

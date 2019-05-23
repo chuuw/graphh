@@ -67,17 +67,11 @@ class GraphHopper(object):
         return self.url_handle("route", l_param)
 
     def distance(self, latlong1, latlong2):
-        if CGHError.valid_point(latlong1) and CGHError.valid_point(latlong2):
-            url = GraphHopper.url + "route?point=" + str(latlong1[0]) + "," + str(latlong1[1]) + "&point=" + str(latlong2[0]) + "," + str(latlong2[1]) + "&key=" + self.APIkey
-            fp = urllib.request.urlopen(url)
-            dic=json.load(fp)
-            return "distance : "+str(dic["paths"][0]["distance"])+" m"
+        dic = self.itinerary(latlong1, latlong2)
+        return dic["paths"][0]["distance"]
 
     def time(self, latlong1, latlong2, vehicle="car"):
-        if CGHError.valid_point(latlong1) and CGHError.valid_point(latlong2):
-            url = GraphHopper.url + "route?point=" + str(latlong1[0]) + "," + str(latlong1[1]) + "&point=" + str(latlong2[0]) + "," + str(latlong2[1]) + "&vehicle=" + vehicle +  "&key=" + self.APIkey
-            fp = urllib.request.urlopen(url)
-            dic=json.load(fp)
-            return "time : "+str(dic["paths"][0]["time"])+" ms"
+        dic = self.itinerary(latlong1, latlong2, vehicle)
+        return dic["paths"][0]["time"]
 
     # def repr_itinerary(self):
