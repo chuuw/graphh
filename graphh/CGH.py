@@ -11,10 +11,12 @@ class GraphHopper(object):
     # initialisation of the class
 
     def url_handle(self, api, l_parameters):
-        # api: name of the api used
-        # l_parameters: list of parameters to insert in the url
-        # example of parameter:
-        # "point=51.131,12.414" or "locale=en"
+        """
+         api: name of the api used
+         l_parameters: list of parameters to insert in the url
+         example of parameter:
+         "point=51.131,12.414" or "locale=en"
+         """
         complete_url = GraphHopper.url + api + "?"
         for p in l_parameters:
             complete_url += "&{}".format(p)
@@ -23,7 +25,7 @@ class GraphHopper(object):
             fp = urllib.request.urlopen(complete_url)
             return json.load(fp)
 
-    def geocode(self, address, limit=1, locale = "en"):
+    def geocode(self, address, limit=1, locale="en"):
         """
         :param address:
         :param limit:
@@ -35,7 +37,7 @@ class GraphHopper(object):
         l_param.append("limit={}".format(str(limit)))
         if CGHError.valid_locale(locale):
             l_param.append("locale={}".format(locale))
-        return self.url_handle("geocode",l_param)
+        return self.url_handle("geocode", l_param)
 
     def reverse_geocode(self, latlong):
         """
@@ -81,5 +83,3 @@ class GraphHopper(object):
 
     def latlong_to_adress(self, latlong):
         d = self.reverse_geocode(latlong)
-        
-
