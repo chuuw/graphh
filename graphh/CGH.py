@@ -80,4 +80,13 @@ class GraphHopper(object):
             dic=json.load(fp)
             return "time : "+str(dic["paths"][0]["time"])+" ms"
 
-    # def repr_itinerary(self):
+    def adress_to_latlong(self, adress):
+        d = self.geocode(adress, limit=1)
+        lat = d["hits"][0]["point"]["lat"]
+        long = d["hits"][0]["point"]["lng"]
+        return (lat, long)
+
+    def latlong_to_adress(self, latlong):
+        d = self.reverse_geocode(latlong)
+        
+

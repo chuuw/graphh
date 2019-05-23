@@ -13,9 +13,13 @@ key_access = key_file["graphhopper"]
 
 G1 = CGH.GraphHopper(key_access)
 
-print(G1.geocode("4 allée du clos prioul Montgermont"))
-print(G1.geocode("30 mail éric tabarly Montgermont"))
-print(G1.geocode("5 North Abbey street cork ireland",limit=2))
+# test geocode
+# print(G1.geocode("4 allée du clos prioul Montgermont"))
+# print(G1.geocode("30 mail éric tabarly Montgermont"))
+# print(G1.geocode("5 North Abbey street cork ireland",limit=2))
+
+# test adress_to_latlong
+print(G1.adress_to_latlong("4 allée du clos prioul Montgermont"))
 
 
 
