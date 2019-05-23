@@ -83,3 +83,18 @@ class GraphHopper(object):
 
     def latlong_to_adress(self, latlong):
         d = self.reverse_geocode(latlong)
+        l_elem = []
+        if "housenumber" in d["hits"][0].keys():
+            num = d["hits"][0]["housenumber"]
+            l_elem.append(num)
+        if "street" in d["hits"][0].keys():
+            st = d["hits"][0]["street"]
+            l_elem.append(st)
+        pc = d["hits"][0]["postcode"]
+        l_elem.append(pc)
+        c = d["hits"][0]["city"]
+        l_elem.append(c)
+        a = ""
+        for elt in l_elem:
+            a += "{} ".format(elt)
+        return a.strip()
