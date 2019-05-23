@@ -52,11 +52,15 @@ class GraphHopper(object):
     def itinerary(self, latlong1, latlong2, vehicle="car"):
         # prend en entrée 2 tuples (lat, long)
         # retourne un dictionnaire
+        l_param = []
         if CGHError.valid_point(latlong1) and CGHError.valid_point(latlong2):
-            url = GraphHopper.url + "route?point=" + str(latlong1[0])+ "," + str(latlong1[1]) + "&point=" + str(latlong2[0]) + "," + str(latlong2[1]) + "&vehicle=" + vehicle + "&key=" + self.APIkey
-            if CGHError.CGHError(url):
-                fp = urllib.request.urlopen(url)
-                return json.load(fp)
+            l_param.append("point={},{}".format(latlong1[0], latlong1[1]))
+            l_param.append("point={},{}".format(latlong2[0], latlong2[1]))
+        if CGHError.valid_vehicle(vehicle):
+            l_param.append("vehicle={}".format(vehicle))
+        return self.url_handle("route", l_param)
+
+
 
     def distance(self, latlong1, latlong2):
         if CGHError.valid_point(latlong1) and CGHError.valid_point(latlong2):

@@ -22,6 +22,14 @@ def valid_point(point): # point = (lat, long)
       return False
   return True
 
+def valid_vehicle(vehicle):
+  l_vehicle = ["car", "bike"]
+  if vehicle in l_vehicle:
+    return True
+  else:
+    print("Error: ")
+    sys.exit()
+
 def CGHError(url):
   try:
     fp=urllib.request.urlopen(url)
