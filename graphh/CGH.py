@@ -30,11 +30,11 @@ class GraphHopper(object):
     def geocode(self, address, limit=1):
         # prend en entrée une adresse en chaîne de caractère
         # retourne un dictionnaire
-        adresse = str(unicodedata.normalize('NFKD', str(address)).encode('ascii', 'ignore'))
-        url1=GraphHopper.url+"geocode?q="+adresse.replace(" ","+")+"&limit="+str(limit)+"&key="+self.APIkey
-        fp = urllib.request.urlopen(url1)
-        dico = fp.read().decode("utf-8")
-        return dico
+        a = str(unicodedata.normalize('NFKD', str(address)).encode('ascii', 'ignore'))
+        l_param = []
+        l_param.append("q={}".format(a.replace(" ", "+")))
+        l_param.append("limit={}".format(str(limit)))
+        return self.url_handle("geocode",l_param)
 
     def reverse_geocode(self, latlong):
         """
