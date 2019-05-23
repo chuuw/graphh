@@ -3,16 +3,17 @@ import json
 import unicodedata
 import CGHError
 
-# url complet :
+# complete url :
 # https://graphhopper.com/api/1/route?point=51.131,12.414&point=48.224,3.867&
 # vehicle=ezfke&locale=de&calc_points=false&key=1620b7ee-90b2-4daa-9ef5-4aba2d279978
+
 
 class GraphHopper(object):
     url = "https://graphhopper.com/api/1/"
 
-    def __init__(self, Ak):
-        self.APIkey = Ak
-    #initialisation de la classe
+    def __init__(self, ak):
+        self.APIkey = ak
+    # initialisation of the class
 
     def url_handle(self, api, l_parameters):
         # api: name of the api used
@@ -47,7 +48,6 @@ class GraphHopper(object):
         l_param.append("reverse=true")
         return self.url_handle("geocode", l_param)
 
-
     def itinerary(self, latlong1, latlong2, vehicle="car"):
         # prend en entrée 2 tuples (lat, long)
         # retourne un dictionnaire
@@ -64,7 +64,6 @@ class GraphHopper(object):
             dic=json.load(fp)
             return "distance : "+str(dic["paths"][0]["distance"])+" m"
 
-
     def time(self, latlong1, latlong2, vehicle="car"):
         if CGHError.valid_point(latlong1) and CGHError.valid_point(latlong2):
             url = GraphHopper.url + "route?point=" + str(latlong1[0]) + "," + str(latlong1[1]) + "&point=" + str(latlong2[0]) + "," + str(latlong2[1]) + "&vehicle=" + vehicle +  "&key=" + self.APIkey
@@ -72,5 +71,4 @@ class GraphHopper(object):
             dic=json.load(fp)
             return "time : "+str(dic["paths"][0]["time"])+" ms"
 
-    #def repr_itinerary(self):
-
+    # def repr_itinerary(self):
