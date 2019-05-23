@@ -3,7 +3,8 @@ import urllib.request
 import sys
 import json
 
-def valid_point(point): # point = (lat, long)
+
+def valid_point(point):  # point = (lat, long)
   try:
    for coordinate in point: 
      float(coordinate)
@@ -21,6 +22,7 @@ def valid_point(point): # point = (lat, long)
       sys.exit()
       return False
   return True
+
 
 def CGHError(url):
   try:
@@ -42,6 +44,7 @@ def CGHError(url):
       print(APIKeyRemaining(e), "remaining credits")
     sys.exit()
   return True
+
 
 def APIKeyRemaining(error):
   header = str(error.headers).replace("\n", " ").split(" ")

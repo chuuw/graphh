@@ -8,8 +8,8 @@ import json
 
 
 fp1 = open(os.path.join('..', "credentials.json"), "r", encoding="utf-8")
-dossiercle = json.load(fp1)
-key_access = dossiercle["graphhopper"]
+key_file = json.load(fp1)
+key_access = key_file["graphhopper"]
 
 G1 = CGH.GraphHopper(key_access)
 
