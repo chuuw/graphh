@@ -67,13 +67,25 @@ class GraphHopper(object):
             l_param.append("locale={}".format(locale))
         return self.url_handle("route", l_param)
 
-    def distance(self, latlong1, latlong2):
+    def distance(self, latlong1, latlong2, unit="m"):
         dic = self.itinerary(latlong1, latlong2)
-        return dic["paths"][0]["distance"]
+        if CGHError.valid_unitdistance(unit):
+            if unit == "m" :
+                return dic["paths"][0]["distance"]
+            elif unit == "km" :
+                return (dic["paths"][0]["distance"]) / 1000
 
-    def time(self, latlong1, latlong2, vehicle="car"):
+    def time(self, latlong1, latlong2, vehicle="car", unit="ms"):
         dic = self.itinerary(latlong1, latlong2, vehicle)
-        return dic["paths"][0]["time"]
+        if CGHError.valid_unittime(unit):
+            if  unit == "ms" :
+                return dic["paths"][0]["time"]
+            elif unit == "s" :
+                return (dic["paths"][0]["time"])/1000
+            elif unit == "min" :
+                return ((dic["paths"][0]["time"]) / 1000) / 60
+            elif unit == "h" :
+                return (((dic["paths"][0]["time"]) / 1000) / 60) / 60
 
     def adress_to_latlong(self, adress):
         d = self.geocode(adress, limit=1)
