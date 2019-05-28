@@ -43,25 +43,21 @@ def valid_locale(locale):
     print("Error: wrong language")
     sys.exit()
 
-def CGHError(url):
-  try:
-    fp=urllib.request.urlopen(url)
-    contenu=json.load(fp)
-  except HTTPError as e:
-    if e.code == 400:
-      print("Error: argument not correct")
+def CGHError(error):
+
+    if error.code == 400:
+      e.msg = "Argument not correct"
       print(APIKeyRemaining(e), "remaining credits")
     elif e.code == 401:
-      print("Error: key error")
+      e.msg = "Key error"
     elif e.code == 429:
-      print("Error: API limit reached")
+      e.msg = "API limit reached"
     elif e.code == 500:
-      print("Error: Internal server error")
+      e.msg = "Internal server error"
       print(APIKeyRemaining(e), "remaining credits")
     elif e.code == 501:
-      print("Error: Vehicle error")
+      e.msg = "vehicle error"
       print(APIKeyRemaining(e), "remaining credits")
-    sys.exit()
   return True
 
 
