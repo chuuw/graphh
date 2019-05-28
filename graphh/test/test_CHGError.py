@@ -4,6 +4,7 @@ import sys
 sys.path.append(os.path.join(".."))
 
 from graphh import CGHError
+from graphh import CGH
 
 # TEST check_point
 # CGHError.check_point(("a","b")) OK
@@ -26,5 +27,12 @@ from graphh import CGHError
 # CGHError.check_locale((1,2)) OK
 # CGHError.check_locale("enn") OK
 # CGHError.check_locale("it") OK
+
+"""test wrong api access key"""
+point1 = (48.121410, -1.703526)
+point2 = (48.114858, -1.680012)
+
+G1 = CGH.GraphHopper("zdisfnz")
+G1.itinerary(point2,point1)
 
 

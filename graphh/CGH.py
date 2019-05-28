@@ -1,7 +1,9 @@
 import urllib.request
 import json
 import unicodedata
+
 from graphh import CGHError
+from urllib.error import HTTPError
 
 
 class GraphHopper(object):
@@ -22,9 +24,14 @@ class GraphHopper(object):
         for p in l_parameters:
             complete_url += "&{}".format(p)
         complete_url += "&key=" + self.APIkey
-        if CGHError.CGHError(complete_url):
+        try:
             fp = urllib.request.urlopen(complete_url)
-            return json.load(fp)
+            result = json.load(fp)
+        except HTTPError as e:
+            CGHError.CGHError(e)
+        else:
+            return result
+
 
     def geocode(self, address, limit=1, locale="en"):
         """
@@ -71,8 +78,9 @@ class GraphHopper(object):
         l_param = []
 
         CGHError.check_point(latlong1)
-        CGHError.check_point(latlong2)
         l_param.append("point={},{}".format(latlong1[0], latlong1[1]))
+
+        CGHError.check_point(latlong2)
         l_param.append("point={},{}".format(latlong2[0], latlong2[1]))
 
         CGHError.check_vehicle(vehicle)
