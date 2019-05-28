@@ -3,21 +3,28 @@ import sys
 
 sys.path.append(os.path.join(".."))
 
-import CGHError
+from graphh import CGHError
 
-l_points = [("a","b"), ("a", 1), (1, 2, 3), (1, 2, "c"), (-93, 2), (-101, 234),
-            (1, 2)]
+# TEST check_point
+# CGHError.check_point(("a","b")) OK
+# CGHError.check_point(("a", 1))) OK
+# CGHError.check_point((1, 2, 3)) OK
+# CGHError.check_point((1, 2, "c")) OK
+# CGHError.check_point((-93, 2)) OK
+# CGHError.check_point((-101, 234)) OK
+# CGHError.check_point((1, 2)) OK
 
-for point in l_points:
-    print(CGHError.valid_point(point))
+# TEST check_vehicle
+# CGHError.check_vehicle("banane") OK
+# CGHError.check_vehicle(12) OK
+# CGHError.check_vehicle("carr") OK
+# CGHError.check_vehicle("small_truck") OK
 
-# j'ai mis en commentaire les sys.exit() dans valid_point dans CGHError
-# pour faire les tests parce que sinon le programme se fermait juste
-# après la première erreur et donc
-# on ne pouvait pas faire plusieurs tests sur le même fichier,
-# ce qui n'est pas pratique du tout
-# je les ai remis sans commentaires après, même si je ne vois pas trop
-# à quoi ils servent du coup
+# TEST check_locale
+# CGHError.check_locale("chocolat") OK
+# CGHError.check_locale(123) OK
+# CGHError.check_locale((1,2)) OK
+# CGHError.check_locale("enn") OK
+# CGHError.check_locale("it") OK
 
-    
 

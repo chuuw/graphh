@@ -6,13 +6,13 @@ import json
 
 def valid_point(point):  # point = (lat, long)
   try:
-   for coordinate in point: 
+   for coordinate in point:
      float(coordinate)
   except ValueError:
     print("Error: coordinates are not valid")
     sys.exit()
     return False
-  else: 
+  else:
     if not len(point)==2:
       print("Error: point need to be lat and long")
       sys.exit()

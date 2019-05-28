@@ -1,7 +1,8 @@
 import urllib.request
 import json
 import unicodedata
-import CGHError
+from graphh import CGHError
+
 
 class GraphHopper(object):
     url = "https://graphhopper.com/api/1/"
@@ -29,25 +30,34 @@ class GraphHopper(object):
         """
         :param address:
         :param limit:
+        :param locale:
         :return dictionary:
         """
         a = str(unicodedata.normalize('NFKD', str(address)).encode('ascii', 'ignore'))
         l_param = []
         l_param.append("q={}".format(a.replace(" ", "+")))
         l_param.append("limit={}".format(str(limit)))
-        if CGHError.valid_locale(locale):
-            l_param.append("locale={}".format(locale))
+
+        CGHError.check_locale(locale)
+        l_param.append("locale={}".format(locale))
+
         return self.url_handle("geocode", l_param)
 
-    def reverse_geocode(self, latlong):
+    def reverse_geocode(self, latlong, locale="en"):
         """
         :param latlong:
+        :param locale:
         :return dictionary:
         """
         l_param = []
-        if CGHError.valid_point(latlong):
-            l_param.append("point={},{}".format(latlong[0], latlong[1]))
         l_param.append("reverse=true")
+
+        CGHError.check_point(latlong)
+        l_param.append("point={},{}".format(latlong[0], latlong[1]))
+
+        CGHError.check_locale(locale)
+        l_param.append("locale={}".format(locale))
+
         return self.url_handle("geocode", l_param)
 
     def itinerary(self, latlong1, latlong2, vehicle="car", locale="en"):
@@ -55,31 +65,49 @@ class GraphHopper(object):
         :param latlong1:
         :param latlong2:
         :param vehicle:
+        :param locale:
         :return dictionary:
         """
         l_param = []
-        if CGHError.valid_point(latlong1) and CGHError.valid_point(latlong2):
-            l_param.append("point={},{}".format(latlong1[0], latlong1[1]))
-            l_param.append("point={},{}".format(latlong2[0], latlong2[1]))
-        if CGHError.valid_vehicle(vehicle):
-            l_param.append("vehicle={}".format(vehicle))
-        if CGHError.valid_locale(locale):
-            l_param.append("locale={}".format(locale))
+
+        CGHError.check_point(latlong1)
+        CGHError.check_point(latlong2)
+        l_param.append("point={},{}".format(latlong1[0], latlong1[1]))
+        l_param.append("point={},{}".format(latlong2[0], latlong2[1]))
+
+        CGHError.check_vehicle(vehicle)
+        l_param.append("vehicle={}".format(vehicle))
+
+        CGHError.check_locale(locale)
+        l_param.append("locale={}".format(locale))
+
         return self.url_handle("route", l_param)
 
-    def distance(self, latlong1, latlong2):
+    def distance(self, latlong1, latlong2, unit="m"):
         dic = self.itinerary(latlong1, latlong2)
-        return dic["paths"][0]["distance"]
+        if CGHError.valid_unitdistance(unit):
+            if unit == "m" :
+                return dic["paths"][0]["distance"]
+            elif unit == "km" :
+                return (dic["paths"][0]["distance"]) / 1000
 
-    def time(self, latlong1, latlong2, vehicle="car"):
+    def time(self, latlong1, latlong2, vehicle="car", unit="ms"):
         dic = self.itinerary(latlong1, latlong2, vehicle)
-        return dic["paths"][0]["time"]
+        if CGHError.valid_unittime(unit):
+            if  unit == "ms" :
+                return dic["paths"][0]["time"]
+            elif unit == "s" :
+                return (dic["paths"][0]["time"])/1000
+            elif unit == "min" :
+                return ((dic["paths"][0]["time"]) / 1000) / 60
+            elif unit == "h" :
+                return (((dic["paths"][0]["time"]) / 1000) / 60) / 60
 
     def adress_to_latlong(self, adress):
         d = self.geocode(adress, limit=1)
         lat = d["hits"][0]["point"]["lat"]
         long = d["hits"][0]["point"]["lng"]
-        return (lat, long)
+        return lat, long
 
     def latlong_to_adress(self, latlong):
         d = self.reverse_geocode(latlong)
