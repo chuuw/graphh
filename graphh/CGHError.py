@@ -1,9 +1,3 @@
-from urllib.error import HTTPError
-import urllib.request
-import sys
-import json
-
-
 def check_point(point):
     try:
         for coordinate in point:
@@ -58,23 +52,23 @@ def valid_unitdistance(unit):
 
 def CGHError(e):
     if e.code == 400:
-      e.msg= "argument not correct"
-      raise HTTPError
       print(APIKeyRemaining(e), "remaining credits")
+      e.msg= "Argument not correct"
+      raise e
     elif e.code == 401:
-      e.msg= "key error"
-      raise HTTPError
+      e.msg= "Key error"
+      raise e
     elif e.code == 429:
       e.msg= "API limit reached"
-      raise HTTPError
+      raise e
     elif e.code == 500:
+      print(APIKeyRemaining(e), "remaining credits")
       e.msg= "Internal server error"
-      raise HTTPError
-      print(APIKeyRemaining(e), "remaining credits")
+      raise e
     elif e.code == 501:
-      e.msg = "Vehicle error"
-      raise HTTPError
       print(APIKeyRemaining(e), "remaining credits")
+      e.msg = "Vehicle error"
+      raise e
 
 
 def APIKeyRemaining(error):
