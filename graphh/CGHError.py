@@ -44,22 +44,19 @@ def valid_locale(locale):
     sys.exit()
 
 def CGHError(error):
-
     if error.code == 400:
-      e.msg = "Argument not correct"
-      print(APIKeyRemaining(e), "remaining credits")
-    elif e.code == 401:
-      e.msg = "Key error"
-    elif e.code == 429:
-      e.msg = "API limit reached"
-    elif e.code == 500:
-      e.msg = "Internal server error"
-      print(APIKeyRemaining(e), "remaining credits")
-    elif e.code == 501:
-      e.msg = "vehicle error"
-      print(APIKeyRemaining(e), "remaining credits")
-  return True
-
+      error.msg = "Argument not correct"
+      print(APIKeyRemaining(error), "remaining credits")
+    elif error.code == 401:
+      error.msg = "Key error"
+    elif error.code == 429:
+      error.msg = "API limit reached"
+    elif error.code == 500:
+      error.msg = "Internal server error"
+      print(APIKeyRemaining(error), "remaining credits")
+    elif error.code == 501:
+      error.msg = "vehicle error"
+      print(APIKeyRemaining(error), "remaining credits")
 
 def APIKeyRemaining(error):
   header = str(error.headers).replace("\n", " ").split(" ")
