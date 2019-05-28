@@ -4,24 +4,22 @@ import sys
 import json
 
 
-def valid_point(point):  # point = (lat, long)
-  try:
-   for coordinate in point: 
-     float(coordinate)
-  except ValueError:
-    print("Error: coordinates are not valid")
-    sys.exit()
-    return False
-  else: 
-    if not len(point)==2:
-      print("Error: point need to be lat and long")
-      sys.exit()
-      return False
-    elif not (-90 <= point[0] <= 90 and -180 <= point[1] <= 180) :
-      print("Error: latitude or longitude value is not valid")
-      sys.exit()
-      return False
-  return True
+def check_point(point):
+    try:
+        for coordinate in point:
+            float(coordinate)
+    except ValueError as e:
+        e = ValueError("Coordinates are not valid")
+        raise e
+    else:
+        if not len(point) == 2:
+            e = ValueError("Point needs to be lat and long")
+            raise e
+        elif not (-90 <= point[0] <= 90 and -180 <= point[1] <= 180):
+            e = ValueError("Latitude or longitude value is not valid")
+            raise e
+
+
 
 def valid_vehicle(vehicle):
   l_vehicle = [
@@ -34,6 +32,16 @@ def valid_vehicle(vehicle):
   else:
     print("Error: wrong vehicle")
     sys.exit()
+
+def check_vehicle(vehicle):
+    l_vehicle = [
+        "car", "small_truck", "truck",
+        "scooter", "foot", "hike",
+        "bike", "mtb", "racingbike"
+    ]
+    if not vehicle in l_vehicle:
+        e = ValueError("{} is not a valid vehicle".format(vehicle))
+        raise e
 
 def valid_locale(locale):
   l_locale = ["en", "fr", "de", "it"]
