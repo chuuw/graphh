@@ -20,19 +20,6 @@ def check_point(point):
             raise e
 
 
-
-def valid_vehicle(vehicle):
-  l_vehicle = [
-      "car", "small_truck", "truck",
-      "scooter", "foot", "hike",
-      "bike", "mtb", "racingbike"
-      ]
-  if vehicle in l_vehicle:
-    return True
-  else:
-    print("Error: wrong vehicle")
-    sys.exit()
-
 def check_vehicle(vehicle):
     l_vehicle = [
         "car", "small_truck", "truck",
@@ -43,13 +30,13 @@ def check_vehicle(vehicle):
         e = ValueError("{} is not a valid vehicle".format(vehicle))
         raise e
 
-def valid_locale(locale):
-  l_locale = ["en", "fr", "de", "it"]
-  if locale in l_locale:
-    return True
-  else:
-    print("Error: wrong language")
-    sys.exit()
+
+def check_locale(locale):
+    l_locale = ["en", "fr", "de", "it"]
+    if not locale in l_locale:
+        e = ValueError("{} is not a valid language".format(locale))
+        raise e
+
 
 def valid_unittime(unit):
   l_unit = ["ms", "s", "min", "h"]
@@ -59,6 +46,7 @@ def valid_unittime(unit):
     print("Error : wrong time unit")
     sys.exit()
 
+
 def valid_unitdistance(unit):
   l_unit = ["m", "km"]
   if unit in l_unit :
@@ -66,6 +54,7 @@ def valid_unitdistance(unit):
   else:
     print("Error : wrong distance unit")
     sys.exit()
+
 
 def CGHError(url):
   try:
