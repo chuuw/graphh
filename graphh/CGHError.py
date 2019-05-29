@@ -17,14 +17,14 @@ def check_point(point):
 def check_vehicle(vehicle):
     l_vehicle = ["car", "foot", "bike"]
     if not vehicle in l_vehicle:
-        e = ValueError("{} is not a valid vehicle".format(vehicle))
+        e = ValueError("{} is not a valid vehicle, must be in the list : {}".format(vehicle, l_vehicle))
         raise e
 
 
 def check_locale(locale):
     l_locale = ["en", "fr", "de", "it"]
     if not locale in l_locale:
-        e = ValueError("{} is not a valid language".format(locale))
+        e = ValueError("{} is not a valid language, must be in the list : {}".format(locale, l_locale))
         raise e
 
 
