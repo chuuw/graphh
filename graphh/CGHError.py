@@ -15,11 +15,7 @@ def check_point(point):
 
 
 def check_vehicle(vehicle):
-    l_vehicle = [
-        "car", "small_truck", "truck",
-        "scooter", "foot", "hike",
-        "bike", "mtb", "racingbike"
-    ]
+    l_vehicle = ["car", "foot", "bike"]
     if not vehicle in l_vehicle:
         e = ValueError("{} is not a valid vehicle".format(vehicle))
         raise e
