@@ -32,23 +32,17 @@ def check_locale(locale):
         raise e
 
 
-def valid_unittime(unit):
+def check_unittime(unit):
   l_unit = ["ms", "s", "min", "h"]
-  if unit in l_unit :
-    return True
-  else:
-    print("Error : wrong time unit")
-    sys.exit()
+  if not unit in l_unit :
+      e = ValueError("{} is not a valid time unit, must be in the list : {}".format(unit, l_unit))
+      raise e
 
-
-def valid_unitdistance(unit):
+def check_unitdistance(unit):
   l_unit = ["m", "km"]
-  if unit in l_unit :
-    return True
-  else:
-    print("Error : wrong distance unit")
-    sys.exit()
-
+  if not unit in l_unit:
+      e = ValueError("{} is not a valid distance unit, must be in the list : {}".format(unit, l_unit))
+      raise e
 
 def CGHError(e):
     if e.code == 400:
