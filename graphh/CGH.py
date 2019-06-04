@@ -64,7 +64,9 @@ class GraphHopper(object):
 
         return self.url_handle("geocode", l_param)
 
-    def route(self, l_latlong , vehicle="car", locale="en"):
+    def route(self, l_latlong , vehicle="car", locale="en",
+                calc_points="true", instructions="true",
+                points_encoded="true", elevation="false"):
         """
         :param latlong1:
         :param latlong2:
@@ -83,10 +85,22 @@ class GraphHopper(object):
 
         l_param.append("locale={}".format(locale))
 
+        CGHError.check_boolean(instructions)
+        l_param.append("instructions={}".format(instructions))
+
+        CGHError.check_boolean(calc_points)
+        l_param.append("calc_points={}".format(calc_points))
+
+        CGHError.check_boolean(points_encoded)
+        l_param.append("points_encoded={}".format(points_encoded))
+
+        CGHError.check_boolean(elevation)
+        l_param.append("elevation={}".format(elevation))
+
         return self.url_handle("route", l_param)
 
     def distance(self, l_latlong, unit="m"):
-        dic = self.route(l_latlong)
+        dic = self.route(l_latlong, points_encoded="false")
         CGHError.check_unitdistance(unit)
         if unit == "m" :
             return dic["paths"][0]["distance"]
@@ -94,7 +108,7 @@ class GraphHopper(object):
             return (dic["paths"][0]["distance"]) / 1000
 
     def time(self, l_latlong, vehicle="car", unit="ms"):
-        dic = self.route(l_latlong, vehicle)
+        dic = self.route(l_latlong, vehicle, points_encoded="false")
         CGHError.check_unittime(unit)
         if  unit == "ms" :
             return dic["paths"][0]["time"]
@@ -128,3 +142,8 @@ class GraphHopper(object):
         for elt in l_elem:
             a += "{} ".format(elt)
         return a.strip()
+
+    def elevation_point(self, point):
+        dict = self.route([point,point],instructions="false", elevation="true", points_encoded= "false")
+        return dict["paths"][0]["points"]["coordinates"][0]
+        #lat and long are inverse

@@ -1,5 +1,5 @@
 def check_point(l_latlong):
-    if len(l_latlong) < 2 :
+    if len(list(l_latlong)) < 2 :
         raise ValueError("You must specify at least 2 points")
     for point in l_latlong:
         try:
@@ -40,6 +40,10 @@ def check_unitdistance(unit):
   if not unit in l_unit:
       e = ValueError("{} is not a valid distance unit, must be in the list : {}".format(unit, l_unit))
       raise e
+
+def check_boolean(arg):
+    if arg not in ["true","false"]:
+        raise ValueError("{} is not valid, must be 'true'or 'false'".format(arg))
 
 def CGHError(e):
     if e.code == 400:
