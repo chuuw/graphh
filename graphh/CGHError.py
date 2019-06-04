@@ -58,6 +58,5 @@ def CGHError(e):
 
 def APIKeyRemaining(error):
   header = str(error.headers).replace("\n", " ").split(" ")
-  print(header)
   indice = header.index("X-RateLimit-Remaining:")
   return header[indice+1]
