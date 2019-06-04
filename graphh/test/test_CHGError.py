@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 
 sys.path.append(os.path.join(".."))
 
@@ -29,10 +30,9 @@ from graphh import CGH
 # CGHError.check_locale("it") OK
 
 # """test wrong api access key"""
-# point1 = (48.121410, -1.703526)
-# point2 = (48.114858, -1.680012)
-#
-# G1 = CGH.GraphHopper("zdisfnz")
-# G1.itinerary(point2,point1)
+point1 = (48.121410, -1.703526)
+point2 = (48.114858, -1.680012)
+G1 = CGH.GraphHopper("d37dcab2-7f16-4342-b40e-845c3d004c55")
+print(G1.route(point1,point1, locale="fr&points_encoded=false&elevation=true"))
 
 

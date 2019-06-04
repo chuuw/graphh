@@ -9,8 +9,9 @@ from urllib.error import HTTPError
 class GraphHopper(object):
     url = "https://graphhopper.com/api/1/"
 
-    def __init__(self, ak):
+    def __init__(self, ak, premium = False):
         self.APIkey = ak
+        self.prem = premium
     # initialisation of the class
 
     def url_handle(self, api, l_parameters):
@@ -44,8 +45,6 @@ class GraphHopper(object):
         l_param = []
         l_param.append("q={}".format(a.replace(" ", "+")))
         l_param.append("limit={}".format(str(limit)))
-
-        CGHError.check_locale(locale)
         l_param.append("locale={}".format(locale))
 
         return self.url_handle("geocode", l_param)
@@ -61,13 +60,11 @@ class GraphHopper(object):
 
         CGHError.check_point(latlong)
         l_param.append("point={},{}".format(latlong[0], latlong[1]))
-
-        CGHError.check_locale(locale)
         l_param.append("locale={}".format(locale))
 
         return self.url_handle("geocode", l_param)
 
-    def itinerary(self, latlong1, latlong2, vehicle="car", locale="en"):
+    def route(self, latlong1, latlong2, vehicle="car", locale="en"):
         """
         :param latlong1:
         :param latlong2:
@@ -83,16 +80,15 @@ class GraphHopper(object):
         CGHError.check_point(latlong2)
         l_param.append("point={},{}".format(latlong2[0], latlong2[1]))
 
-        CGHError.check_vehicle(vehicle)
+        CGHError.check_vehicle(vehicle, self.prem)
         l_param.append("vehicle={}".format(vehicle))
 
-        CGHError.check_locale(locale)
         l_param.append("locale={}".format(locale))
 
         return self.url_handle("route", l_param)
 
     def distance(self, latlong1, latlong2, unit="m"):
-        dic = self.itinerary(latlong1, latlong2)
+        dic = self.route(latlong1, latlong2)
         CGHError.check_unitdistance(unit)
         if unit == "m" :
             return dic["paths"][0]["distance"]
@@ -100,7 +96,7 @@ class GraphHopper(object):
             return (dic["paths"][0]["distance"]) / 1000
 
     def time(self, latlong1, latlong2, vehicle="car", unit="ms"):
-        dic = self.itinerary(latlong1, latlong2, vehicle)
+        dic = self.route(latlong1, latlong2, vehicle)
         CGHError.check_unittime(unit)
         if  unit == "ms" :
             return dic["paths"][0]["time"]
@@ -114,8 +110,8 @@ class GraphHopper(object):
     def adress_to_latlong(self, adress):
         d = self.geocode(adress, limit=1)
         lat = d["hits"][0]["point"]["lat"]
-        long = d["hits"][0]["point"]["lng"]
-        return lat, long
+        lng = d["hits"][0]["point"]["lng"]
+        return lat, lng
 
     def latlong_to_adress(self, latlong):
         d = self.reverse_geocode(latlong)

@@ -14,19 +14,17 @@ def check_point(point):
             raise e
 
 
-def check_vehicle(vehicle):
+def check_vehicle(vehicle, prem):
     l_vehicle = ["car", "foot", "bike"]
-    if not vehicle in l_vehicle:
-        e = ValueError("{} is not a valid vehicle, must be in the list : {}".format(vehicle, l_vehicle))
-        raise e
-
-
-def check_locale(locale):
-    l_locale = ["en", "fr", "de", "it"]
-    if not locale in l_locale:
-        e = ValueError("{} is not a valid language, must be in the list : {}".format(locale, l_locale))
-        raise e
-
+    l_vehicle_prem = l_vehicle + ["small_truck", "truck", "scooter", "hike", "mtb", "racingbike"]
+    if prem == False :
+        if not vehicle in l_vehicle:
+            e = ValueError("{} is not a valid vehicle, must be in the list : {}".format(vehicle, l_vehicle))
+            raise e
+    else:
+        if not vehicle in l_vehicle_prem:
+            e = ValueError("{} is not a valid vehicle, must be in the list : {}".format(vehicle, l_vehicle))
+            raise e
 
 def check_unittime(unit):
   l_unit = ["ms", "s", "min", "h"]
@@ -42,8 +40,7 @@ def check_unitdistance(unit):
 
 def CGHError(e):
     if e.code == 400:
-      print(APIKeyRemaining(e), "remaining credits")
-      e.msg= "Argument not correct"
+      e.msg= "Invalid argument : " + APIKeyRemaining(e) + " remaining credits"
       raise e
     elif e.code == 401:
       e.msg= "Key error"
@@ -52,12 +49,10 @@ def CGHError(e):
       e.msg= "API limit reached"
       raise e
     elif e.code == 500:
-      print(APIKeyRemaining(e), "remaining credits")
-      e.msg= "Internal server error"
+      e.msg= "Internal server error : " + APIKeyRemaining(e) + " remaining credits"
       raise e
     elif e.code == 501:
-      print(APIKeyRemaining(e), "remaining credits")
-      e.msg = "Vehicle error"
+      e.msg = "Vehicle error : " + APIKeyRemaining(e) + " remaining credits"
       raise e
 
 
