@@ -1,17 +1,20 @@
-def check_point(point):
-    try:
-        for coordinate in point:
-            float(coordinate)
-    except ValueError as e:
-        e = ValueError("Coordinates are not valid")
-        raise e
-    else:
-        if not len(point) == 2:
-            e = ValueError("Point needs to be lat and long")
+def check_point(l_latlong):
+    if len(l_latlong) < 2 :
+        raise ValueError("You must specify at least 2 points")
+    for point in l_latlong:
+        try:
+            for coordinate in point:
+                float(coordinate)
+        except ValueError as e:
+            e = ValueError("Coordinates are not valid")
             raise e
-        elif not (-90 <= point[0] <= 90 and -180 <= point[1] <= 180):
-            e = ValueError("Latitude or longitude value is not valid")
-            raise e
+        else:
+            if not len(point) == 2:
+                e = ValueError("Point needs to be lat and long")
+                raise e
+            elif not (-90 <= point[0] <= 90 and -180 <= point[1] <= 180):
+                e = ValueError("Latitude or longitude value is not valid")
+                raise e
 
 
 def check_vehicle(vehicle, prem):

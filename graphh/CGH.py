@@ -64,7 +64,7 @@ class GraphHopper(object):
 
         return self.url_handle("geocode", l_param)
 
-    def route(self, latlong1, latlong2, vehicle="car", locale="en"):
+    def route(self, l_latlong , vehicle="car", locale="en"):
         """
         :param latlong1:
         :param latlong2:
@@ -74,11 +74,9 @@ class GraphHopper(object):
         """
         l_param = []
 
-        CGHError.check_point(latlong1)
-        l_param.append("point={},{}".format(latlong1[0], latlong1[1]))
-
-        CGHError.check_point(latlong2)
-        l_param.append("point={},{}".format(latlong2[0], latlong2[1]))
+        CGHError.check_point(l_latlong)
+        for latlong in l_latlong :
+            l_param.append("point={},{}".format(latlong[0], latlong[1]))
 
         CGHError.check_vehicle(vehicle, self.prem)
         l_param.append("vehicle={}".format(vehicle))
@@ -87,16 +85,16 @@ class GraphHopper(object):
 
         return self.url_handle("route", l_param)
 
-    def distance(self, latlong1, latlong2, unit="m"):
-        dic = self.route(latlong1, latlong2)
+    def distance(self, l_latlong, unit="m"):
+        dic = self.route(l_latlong)
         CGHError.check_unitdistance(unit)
         if unit == "m" :
             return dic["paths"][0]["distance"]
         elif unit == "km" :
             return (dic["paths"][0]["distance"]) / 1000
 
-    def time(self, latlong1, latlong2, vehicle="car", unit="ms"):
-        dic = self.route(latlong1, latlong2, vehicle)
+    def time(self, l_latlong, vehicle="car", unit="ms"):
+        dic = self.route(l_latlong, vehicle)
         CGHError.check_unittime(unit)
         if  unit == "ms" :
             return dic["paths"][0]["time"]
