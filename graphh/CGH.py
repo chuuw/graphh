@@ -7,12 +7,14 @@ from urllib.error import HTTPError
 
 
 class GraphHopper(object):
+    """
+
+    """
     url = "https://graphhopper.com/api/1/"
 
     def __init__(self, ak, premium = False):
         self.APIkey = ak
         self.prem = premium
-    # initialisation of the class
 
     def url_handle(self, api, l_parameters):
         """
@@ -33,16 +35,31 @@ class GraphHopper(object):
         else:
             return result
 
-
     def geocode(self, address, limit=1, locale="en"):
-        """
-        :param address:
-        :param limit:
-        :param locale:
-        :return dictionary:
+        """This function does geocoding.
+        It transforms a given address into matching geographic coordinates.
+
+        Parameters
+        ----------
+        address : str
+            The address of the location you would like to geocode.
+        limit : int, optional
+            The number of matching location you would like to get.
+            By default, the function will only return one location.
+        locale : str, optional
+            The language of the answer.
+            By default, the answer will be in english.
+
+        Returns
+        -------
+        dict
+            A dictionary containing the matching locations' information,
+            including their geographic coordinates, and the number of ms it took.
+
         """
         a = str(unicodedata.normalize('NFKD', str(address)).encode('ascii', 'ignore'))
         l_param = []
+
         l_param.append("q={}".format(a.replace(" ", "+")))
         l_param.append("limit={}".format(str(limit)))
         l_param.append("locale={}".format(locale))
@@ -50,16 +67,31 @@ class GraphHopper(object):
         return self.url_handle("geocode", l_param)
 
     def reverse_geocode(self, latlong, locale="en"):
-        """
-        :param latlong:
-        :param locale:
-        :return dictionary:
+        """This function does reverse geocoding.
+        It transforms given geographic coordinates into matching addresses.
+
+        Parameters
+        ----------
+        latlong : tuple
+            The geographic coordinates that need to be transformed.
+            The first one is latitude and the second one is the longitude.
+        locale : str, optional
+            The language of the answer.
+            By default, the answer will be in english.
+
+        Returns
+        -------
+        dict
+            A dictionary containing the matching locations' information,
+            including their addresses, and the number of ms it took.
+
         """
         l_param = []
         l_param.append("reverse=true")
 
         CGHError.check_point(latlong)
         l_param.append("point={},{}".format(latlong[0], latlong[1]))
+
         l_param.append("locale={}".format(locale))
 
         return self.url_handle("geocode", l_param)
