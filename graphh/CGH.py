@@ -167,7 +167,7 @@ class GraphHopper(object):
         return lat, lng
 
     def latlong_to_adress(self, latlong):
-        """This function is a simplified version the previous reverse geocoding function.
+        """This function is a simplified version of the previous reverse geocoding function.
 
         Parameters
         ----------
