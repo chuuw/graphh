@@ -42,7 +42,7 @@ class GraphHopper(object):
         Parameters
         ----------
         address : str
-            The address of the location you would like to geocode.
+            The address of the location that needs to be transformed.
         limit : int, optional
             The number of matching location you would like to get.
             By default, the function will only return one location.
@@ -59,11 +59,9 @@ class GraphHopper(object):
         """
         a = str(unicodedata.normalize('NFKD', str(address)).encode('ascii', 'ignore'))
         l_param = []
-
         l_param.append("q={}".format(a.replace(" ", "+")))
         l_param.append("limit={}".format(str(limit)))
         l_param.append("locale={}".format(locale))
-
         return self.url_handle("geocode", l_param)
 
     def reverse_geocode(self, latlong, locale="en"):
@@ -74,7 +72,7 @@ class GraphHopper(object):
         ----------
         latlong : tuple
             The geographic coordinates that need to be transformed.
-            The first one is latitude and the second one is the longitude.
+            The first element is the latitude and the second one is the longitude.
         locale : str, optional
             The language of the answer.
             By default, the answer will be in english.
@@ -88,17 +86,14 @@ class GraphHopper(object):
         """
         l_param = []
         l_param.append("reverse=true")
-
         CGHError.check_point(latlong)
         l_param.append("point={},{}".format(latlong[0], latlong[1]))
-
         l_param.append("locale={}".format(locale))
-
         return self.url_handle("geocode", l_param)
 
     def route(self, l_latlong , vehicle="car", locale="en",
-                calc_points="true", instructions="true",
-                points_encoded="true", elevation="false"):
+              calc_points="true", instructions="true",
+              points_encoded="true", elevation="false"):
         """
         :param latlong1:
         :param latlong2:
@@ -151,13 +146,41 @@ class GraphHopper(object):
         elif unit == "h" :
             return (((dic["paths"][0]["time"]) / 1000) / 60) / 60
 
-    def adress_to_latlong(self, adress):
-        d = self.geocode(adress, limit=1)
+    def adress_to_latlong(self, address):
+        """This function is a simplified version of the previous geocoding function.
+
+        Parameters
+        ----------
+        address : str
+            The address of the location that needs to be transformed.
+
+        Returns
+        -------
+        tuple
+            A tuple corresponding to the geographic coordinates of the location.
+            The first element is the latitude and the second one is the longitude.
+
+        """
+        d = self.geocode(address, limit=1)
         lat = d["hits"][0]["point"]["lat"]
         lng = d["hits"][0]["point"]["lng"]
         return lat, lng
 
     def latlong_to_adress(self, latlong):
+        """This function is a simplified version the previous reverse geocoding function.
+
+        Parameters
+        ----------
+        latlong : tuple
+            The geographic coordinates that need to be transformed.
+            The first element is the latitude and the second one is the longitude.
+
+        Returns
+        -------
+        str
+            The address of the location.
+
+        """
         d = self.reverse_geocode(latlong)
         l_elem = []
         if "housenumber" in d["hits"][0].keys():
