@@ -1,4 +1,4 @@
-from CGH import GraphHopper
+from graphh.CGH import GraphHopper
 
 
 __version__ = "0.0.1"
