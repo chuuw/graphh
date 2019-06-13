@@ -1,88 +1,69 @@
-from urllib.error import HTTPError
-import urllib.request
-import sys
-import json
+def check_point(l_latlong, api):
+    if len(list(l_latlong)) < 2 and api != "geocode":
+        raise ValueError("You must specify at least 2 points")
+    for point in l_latlong:
+        try:
+            for coordinate in point:
+                float(coordinate)
+        except ValueError as e:
+            e = ValueError("Coordinates are not valid")
+            raise e
+        else:
+            if not len(point) == 2:
+                e = ValueError("Point needs to be lat and long")
+                raise e
+            elif not (-90 <= point[0] <= 90 and -180 <= point[1] <= 180):
+                e = ValueError("Latitude or longitude value is not valid")
+                raise e
 
 
-def valid_point(point):  # point = (lat, long)
-  try:
-   for coordinate in point: 
-     float(coordinate)
-  except ValueError:
-    print("Error: coordinates are not valid")
-    sys.exit()
-    return False
-  else: 
-    if not len(point)==2:
-      print("Error: point need to be lat and long")
-      sys.exit()
-      return False
-    elif not (-90 <= point[0] <= 90 and -180 <= point[1] <= 180) :
-      print("Error: latitude or longitude value is not valid")
-      sys.exit()
-      return False
-  return True
+def check_vehicle(vehicle, prem):
+    l_vehicle = ["car", "foot", "bike"]
+    l_vehicle_prem = l_vehicle + ["small_truck", "truck", "scooter", "hike", "mtb", "racingbike"]
+    if prem == False :
+        if not vehicle in l_vehicle:
+            e = ValueError("{} is not a valid vehicle, must be in the list : {}".format(vehicle, l_vehicle))
+            raise e
+    else:
+        if not vehicle in l_vehicle_prem:
+            e = ValueError("{} is not a valid vehicle, must be in the list : {}".format(vehicle, l_vehicle))
+            raise e
 
-def valid_vehicle(vehicle):
-  l_vehicle = [
-      "car", "small_truck", "truck",
-      "scooter", "foot", "hike",
-      "bike", "mtb", "racingbike"
-      ]
-  if vehicle in l_vehicle:
-    return True
-  else:
-    print("Error: wrong vehicle")
-    sys.exit()
-
-def valid_locale(locale):
-  l_locale = ["en", "fr", "de", "it"]
-  if locale in l_locale:
-    return True
-  else:
-    print("Error: wrong language")
-    sys.exit()
-
-def valid_unittime(unit):
+def check_unittime(unit):
   l_unit = ["ms", "s", "min", "h"]
-  if unit in l_unit :
-    return True
-  else:
-    print("Error : wrong time unit")
-    sys.exit()
+  if not unit in l_unit :
+      e = ValueError("{} is not a valid time unit, must be in the list : {}".format(unit, l_unit))
+      raise e
 
-def valid_unitdistance(unit):
+def check_unitdistance(unit):
   l_unit = ["m", "km"]
-  if unit in l_unit :
-    return True
-  else:
-    print("Error : wrong distance unit")
-    sys.exit()
+  if not unit in l_unit:
+      e = ValueError("{} is not a valid distance unit, must be in the list : {}".format(unit, l_unit))
+      raise e
 
-def CGHError(url):
-  try:
-    fp=urllib.request.urlopen(url)
-    contenu=json.load(fp)
-  except HTTPError as e:
+def check_boolean(arg):
+    if arg not in ["true","false"]:
+        raise ValueError("{} is not valid, must be 'true'or 'false'".format(arg))
+
+def CGHError(e):
     if e.code == 400:
-      print("Error: argument not correct")
-      print(APIKeyRemaining(e), "remaining credits")
+      e.msg= "Invalid argument : " + APIKeyRemaining(e) + " remaining credits"
+      raise e
     elif e.code == 401:
-      print("Error: key error")
+      e.msg= "Key error"
+      raise e
     elif e.code == 429:
-      print("Error: API limit reached")
+      e.msg= "API limit reached"
+      raise e
     elif e.code == 500:
-      print("Error: Internal server error")
-      print(APIKeyRemaining(e), "remaining credits")
+      e.msg= "Internal server error : " + APIKeyRemaining(e) + " remaining credits"
+      raise e
     elif e.code == 501:
-      print("Error: Vehicle error")
-      print(APIKeyRemaining(e), "remaining credits")
-    sys.exit()
-  return True
+      e.msg = "Vehicle error : " + APIKeyRemaining(e) + " remaining credits"
+      raise e
 
 
 def APIKeyRemaining(error):
   header = str(error.headers).replace("\n", " ").split(" ")
-  print(header)
   indice = header.index("X-RateLimit-Remaining:")
   return header[indice+1]

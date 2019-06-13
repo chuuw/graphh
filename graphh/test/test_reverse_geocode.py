@@ -14,3 +14,5 @@ key_access = key_file["graphhopper"]
 G1 = CGH.GraphHopper(key_access)
 
 print(G1.reverse_geocode((48.1572091, -1.6853144)))
+# print(G1.reverse_geocode((48.1572091, -1.6853144, "a"))) --> ValueError
+
