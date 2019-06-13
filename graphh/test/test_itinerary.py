@@ -27,4 +27,6 @@ lpoint = (point1,point2, point3)
 
 errors = ("small_truck", "truck", "scooter", "hike", "mtb", "racingbike")
 
-print(G1.elevation_point(point1))
+#print(G1.elevation_point(point1))
+
+#print(G1.route([(1,2)]))

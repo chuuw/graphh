@@ -86,7 +86,7 @@ class GraphHopper(object):
         """
         l_param = []
         l_param.append("reverse=true")
-        CGHError.check_point(latlong)
+        CGHError.check_point([latlong], "geocode")
         l_param.append("point={},{}".format(latlong[0], latlong[1]))
         l_param.append("locale={}".format(locale))
         return self.url_handle("geocode", l_param)
@@ -103,8 +103,8 @@ class GraphHopper(object):
         """
         l_param = []
 
-        CGHError.check_point(l_latlong)
-        for latlong in l_latlong :
+        CGHError.check_point(l_latlong, "route")
+        for latlong in l_latlong:
             l_param.append("point={},{}".format(latlong[0], latlong[1]))
 
         CGHError.check_vehicle(vehicle, self.prem)

@@ -1,5 +1,5 @@
-def check_point(l_latlong):
-    if len(list(l_latlong)) < 2 :
+def check_point(l_latlong, api):
+    if len(list(l_latlong)) < 2 and api != "geocode":
         raise ValueError("You must specify at least 2 points")
     for point in l_latlong:
         try:
