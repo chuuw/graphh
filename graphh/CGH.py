@@ -127,6 +127,20 @@ class GraphHopper(object):
         return self.url_handle("route", l_param)
 
     def distance(self, l_latlong, unit="m"):
+        """ This function give the distance between precised points for a given itinerary
+
+        Parameters
+        ----------
+        l_latlong: list
+            The list of the tuples (latitude, longitude) of the considerated points
+        unit: str
+            The unit of the distance returned chosen between "m" and "km"
+
+        Returns
+        -------
+        float
+            The number of the distance for the itinerary for the unit chosen
+        """
         dic = self.route(l_latlong, points_encoded="false")
         CGHError.check_unitdistance(unit)
         if unit == "m" :
@@ -135,6 +149,23 @@ class GraphHopper(object):
             return (dic["paths"][0]["distance"]) / 1000
 
     def time(self, l_latlong, vehicle="car", unit="ms"):
+        """ This function give the time between precised points for a given itinerary
+
+        Parameters
+        ----------
+        l_latlong: list
+            The list of the tuples (latitude, longitude) of the considerated points
+        vehicle: str
+            The type of vehicle chosen in the list : ["car", "foot", "bike"] if the acount is not premium
+            And can be chosen in the list : ["small_truck", "truck", "scooter", "hike", "mtb", "racingbike"] if it is
+        unit: str
+            The unit of the distance returned chosen between "ms", "s", "min" and "h"
+
+        Returns
+        -------
+        float
+            The number of the time for the itinerary for the unit and vehicle chosen
+        """
         dic = self.route(l_latlong, vehicle, points_encoded="false")
         CGHError.check_unittime(unit)
         if  unit == "ms" :
