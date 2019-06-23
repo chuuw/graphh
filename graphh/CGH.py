@@ -178,7 +178,7 @@ class GraphHopper(object):
             return (((dic["paths"][0]["time"]) / 1000) / 60) / 60
 
     def adress_to_latlong(self, address):
-        """This function is a simplified version of the previous geocoding function.
+        """This function is a simplified version of the geocoding function.
 
         Parameters
         ----------
@@ -198,7 +198,7 @@ class GraphHopper(object):
         return lat, lng
 
     def latlong_to_adress(self, latlong):
-        """This function is a simplified version of the previous reverse geocoding function.
+        """This function is a simplified version of the reverse geocoding function.
 
         Parameters
         ----------
