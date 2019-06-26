@@ -18,10 +18,19 @@ class GraphHopper(object):
 
     def url_handle(self, api, l_parameters):
         """
-         api: name of the api used
-         l_parameters: list of parameters to insert in the url
-         example of parameter:
-         "point=51.131,12.414" or "locale=en"
+        This function does an url request with given parameters
+
+        Parameters
+        ----------
+         api: str
+            name of the api used
+         l_parameters: list
+            list of parameters to insert in the url
+
+        Returns
+        ----------
+        dict
+            The dictionary return by url request
          """
         complete_url = GraphHopper.url + api + "?"
         for p in l_parameters:
@@ -94,12 +103,37 @@ class GraphHopper(object):
     def route(self, l_latlong , vehicle="car", locale="en",
               calc_points="true", instructions="true",
               points_encoded="true", elevation="false"):
-        """
-        :param latlong1:
-        :param latlong2:
-        :param vehicle:
-        :param locale:
-        :return dictionary:
+
+        """ This function give an itinerary between given points
+
+        Parameters
+        ----------
+        l_latlong: tuple list
+            The tuple list (latitude, longitude) of the considerated points
+        vehicle: str, optional
+            The type of vehicle chosen in the list : ["car", "foot", "bike"] if the acount is not premium
+            And can be chosen in the list : ["small_truck", "truck", "scooter", "hike", "mtb", "racingbike"] if it is
+        locale : str, optional
+            The language of the answer.
+            By default, the answer will be in english.
+        calc_points: boolean, optional
+            If the points for the route should be calculated at all.
+            default = true
+        instructions: boolean, optional
+            If instructions should be calculated and returned
+            default = true
+        points_encoded: boolean, optional
+            If false, the coordinates in point and snapped_waypoints are returned as lists of positions
+            using the order [lon,lat,elevation]. If true, the coordinates will be encoded as a string.
+            default = true
+        elevation: boolean, optional
+            If true, a third coordinate, the altitude, is included to all positions in the response
+
+        Returns
+        -------
+        dict
+            A dictionary of the matching itinerary containing distance, time, ascend, descend, points (encoded or not),
+            instructions with street name and description what the user has to do in order to follow the route.
         """
         l_param = []
 
@@ -113,16 +147,16 @@ class GraphHopper(object):
         l_param.append("locale={}".format(locale))
 
         CGHError.check_boolean(instructions)
-        l_param.append("instructions={}".format(instructions))
+        l_param.append("instructions={}".format(instructions.lower()))
 
         CGHError.check_boolean(calc_points)
-        l_param.append("calc_points={}".format(calc_points))
+        l_param.append("calc_points={}".format(calc_points.lower()))
 
         CGHError.check_boolean(points_encoded)
-        l_param.append("points_encoded={}".format(points_encoded))
+        l_param.append("points_encoded={}".format(points_encoded.lower()))
 
         CGHError.check_boolean(elevation)
-        l_param.append("elevation={}".format(elevation))
+        l_param.append("elevation={}".format(elevation.lower()))
 
         return self.url_handle("route", l_param)
 
@@ -229,7 +263,20 @@ class GraphHopper(object):
             a += "{} ".format(elt)
         return a.strip()
 
-    def elevation_point(self, point):
-        dict = self.route([point,point],instructions="false", elevation="true", points_encoded= "false")
-        return dict["paths"][0]["points"]["coordinates"][0]
-        #lat and long are inverse
+    def elevation_point(self, latlong):
+        """
+        This function give an elevation for a given geographic coordinates
+
+        Parameters
+        ----------
+        latlong : tuple
+            The geographic coordinates that need to be transformed.
+            The first element is the latitude and the second one is the longitude.
+
+        Returns
+        ----------
+        float
+            Elevation of one geographic coordinate couple
+        """
+        dict = self.route([latlong,latlong],instructions="false", elevation="true", points_encoded= "false")
+        return dict["paths"][0]["points"]["coordinates"][0][2]
