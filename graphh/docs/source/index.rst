@@ -6,18 +6,8 @@
 Welcome to graphh's documentation!
 ==================================
 
-.. toctree::
-   :maxdepth: 2
 
-   graphh
-
-   :caption: Contents:
+.. automodule:: graphh.CGH
+   :members:
 
 
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
