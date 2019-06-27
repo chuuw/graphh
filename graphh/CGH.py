@@ -7,8 +7,19 @@ from urllib.error import HTTPError
 
 
 class GraphHopper(object):
-    """
+    """A class used to use the Graph Hopper's API
 
+        Attributes
+        ----------
+        url: str
+            The beginning of the url crafted next to recover the data on the API
+        APIkey: str
+            The API key of the user given in a string indispensable to be able to use the API
+            Can be obtained in the GraphHopper's web site
+        prem: bool
+            The information of what type of account the user is using (premium or not), if the user enter "True"
+            the account will be defined as a premium account
+            By default this will be equal to "False" for a non premium account
     """
     url = "https://graphhopper.com/api/1/"
 
@@ -169,6 +180,7 @@ class GraphHopper(object):
             The list of the tuples (latitude, longitude) of the considerated points
         unit: str
             The unit of the distance returned chosen between "m" and "km"
+            By default the unit will be in meters
 
         Returns
         -------
@@ -192,8 +204,10 @@ class GraphHopper(object):
         vehicle: str
             The type of vehicle chosen in the list : ["car", "foot", "bike"] if the acount is not premium
             And can be chosen in the list : ["small_truck", "truck", "scooter", "hike", "mtb", "racingbike"] if it is
+            By default the vehicle will be car
         unit: str
             The unit of the distance returned chosen between "ms", "s", "min" and "h"
+            By default the unit will be in milliseconds
 
         Returns
         -------
