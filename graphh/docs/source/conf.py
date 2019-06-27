@@ -12,7 +12,8 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath(os.path.join('..')))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../..'))
+import graphh
 
 
 # -- Project information -----------------------------------------------------
@@ -22,7 +23,7 @@ copyright = '2019, Maëlle Cosson, Pauline Hamon-Giraud, Clément Caillard and R
 author = 'Maëlle Cosson, Pauline Hamon-Giraud, Clément Caillard and Romain Tavenard'
 
 # The full version, including alpha/beta/rc tags
-release = '0.0.1'
+release = graphh.__version__
 
 # The master toctree document.
 master_doc = 'index'
@@ -34,6 +35,7 @@ master_doc = 'index'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = ["sphinx.ext.autodoc",
+    'sphinx.ext.viewcode',
     'sphinx.ext.napoleon'
 ]
 # autodoc_default_flags = ['members', 'inherited-members']
@@ -53,8 +55,12 @@ exclude_patterns = []
 # a list of builtin themes.
 #
 html_theme = 'alabaster'
+html_theme_options = {
+    # Disable showing the sidebar. Defaults to 'false'
+    'nosidebar': True,
+}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+# html_static_path = ['_static']

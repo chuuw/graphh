@@ -7,7 +7,7 @@ Welcome to graphh's documentation!
 ==================================
 
 
-.. automodule:: graphh.CGH
+.. autoclass:: graphh.GraphHopper
    :members:
 
 

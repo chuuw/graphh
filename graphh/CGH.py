@@ -28,8 +28,7 @@ class GraphHopper(object):
         self.prem = premium
 
     def url_handle(self, api, l_parameters):
-        """
-        This function does an url request with given parameters
+        """This function does an url request with given parameters
 
         Parameters
         ----------
@@ -39,7 +38,7 @@ class GraphHopper(object):
             list of parameters to insert in the url
 
         Returns
-        ----------
+        -------
         dict
             The dictionary return by url request
          """
@@ -114,30 +113,29 @@ class GraphHopper(object):
     def route(self, l_latlong , vehicle="car", locale="en",
               calc_points="true", instructions="true",
               points_encoded="true", elevation="false"):
-
-        """ This function give an itinerary between given points
+        """This function give an itinerary between given points
 
         Parameters
         ----------
-        l_latlong: tuple list
+        l_latlong : tuple list
             The tuple list (latitude, longitude) of the considerated points
-        vehicle: str, optional
+        vehicle : str, optional
             The type of vehicle chosen in the list : ["car", "foot", "bike"] if the acount is not premium
             And can be chosen in the list : ["small_truck", "truck", "scooter", "hike", "mtb", "racingbike"] if it is
         locale : str, optional
             The language of the answer.
             By default, the answer will be in english.
-        calc_points: boolean, optional
+        calc_points : boolean, optional
             If the points for the route should be calculated at all.
             default = true
-        instructions: boolean, optional
+        instructions : boolean, optional
             If instructions should be calculated and returned
             default = true
-        points_encoded: boolean, optional
+        points_encoded : boolean, optional
             If false, the coordinates in point and snapped_waypoints are returned as lists of positions
             using the order [lon,lat,elevation]. If true, the coordinates will be encoded as a string.
             default = true
-        elevation: boolean, optional
+        elevation : boolean, optional
             If true, a third coordinate, the altitude, is included to all positions in the response
 
         Returns
@@ -172,7 +170,7 @@ class GraphHopper(object):
         return self.url_handle("route", l_param)
 
     def distance(self, l_latlong, unit="m"):
-        """ This function give the distance between precised points for a given itinerary
+        """This function give the distance between precised points for a given itinerary
 
         Parameters
         ----------
@@ -195,7 +193,7 @@ class GraphHopper(object):
             return (dic["paths"][0]["distance"]) / 1000
 
     def time(self, l_latlong, vehicle="car", unit="ms"):
-        """ This function give the time between precised points for a given itinerary
+        """This function give the time between precised points for a given itinerary
 
         Parameters
         ----------
@@ -278,8 +276,7 @@ class GraphHopper(object):
         return a.strip()
 
     def elevation_point(self, latlong):
-        """
-        This function give an elevation for a given geographic coordinates
+        """This function give an elevation for a given geographic coordinates
 
         Parameters
         ----------
@@ -288,7 +285,7 @@ class GraphHopper(object):
             The first element is the latitude and the second one is the longitude.
 
         Returns
-        ----------
+        -------
         float
             Elevation of one geographic coordinate couple
         """
