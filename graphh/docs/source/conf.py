@@ -58,7 +58,6 @@ html_theme = 'alabaster'
 html_theme_options = {
     # Disable showing the sidebar. Defaults to 'false'
     'nosidebar': True,
-    'description': 'test',
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
