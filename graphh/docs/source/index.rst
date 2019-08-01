@@ -7,6 +7,8 @@ Welcome to graphh's documentation!
 ==================================
 
 
+
+
 .. autoclass:: graphh.GraphHopper
    :members:
 

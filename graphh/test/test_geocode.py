@@ -18,11 +18,11 @@ G1 = CGH.GraphHopper(key_access)
 # print(G1.geocode("30 mail éric tabarly Montgermont"))
 print(G1.geocode("5 North Abbey street cork ireland",limit=2))
 
-# TEST adress_to_latlong
-print(G1.adress_to_latlong("4 allée du clos prioul Montgermont"))
+# TEST address_to_latlong
+print(G1.address_to_latlong("4 allée du clos prioul Montgermont"))
 
-# TEST latlong_to_adress
-print(G1.latlong_to_adress(((48.1572091, -1.6853144))))
+# TEST latlong_to_address
+print(G1.latlong_to_address(((48.1572091, -1.6853144))))
 # print(G1.reverse_geocode((48.203718, -1.824844)))
-print(G1.latlong_to_adress(((48.203718, -1.824844))))
+print(G1.latlong_to_address(((48.203718, -1.824844))))
 

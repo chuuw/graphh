@@ -14,7 +14,7 @@ import os
 import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../..'))
 import graphh
-
+import sphinx_rtd_theme
 
 # -- Project information -----------------------------------------------------
 
@@ -34,7 +34,8 @@ master_doc = 'index'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ["sphinx.ext.autodoc",
+extensions = ["sphinx_rtd_theme",
+    "sphinx.ext.autodoc",
     'sphinx.ext.viewcode',
     'sphinx.ext.napoleon'
 ]
@@ -54,7 +55,7 @@ exclude_patterns = []
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'alabaster'
+html_theme = "sphinx_rtd_theme"
 html_theme_options = {
     # Disable showing the sidebar. Defaults to 'false'
     'nosidebar': True,
