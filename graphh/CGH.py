@@ -9,6 +9,14 @@ from urllib.error import HTTPError
 class GraphHopper(object):
     """GraphHopper API class.
 
+    Parameters
+    ----------
+     api_key: str
+        API key to be used for queries
+     premium: bool
+        Whether the account corresponding to this key is a premium account
+        or not
+
     Examples
     --------
     >>> from graphh import GraphHopper
