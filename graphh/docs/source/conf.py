@@ -14,11 +14,8 @@ import os
 import sys
 import sphinx_bootstrap_theme
 
-on_rtd = os.environ.get('READTHEDOCS') == 'True'
-if not on_rtd:
-    sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../..'))
-else:
-    sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../..'))
+
 import graphh
 
 # -- Project information -----------------------------------------------------
