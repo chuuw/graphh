@@ -7,27 +7,46 @@ from urllib.error import HTTPError
 
 
 class GraphHopper(object):
-    """A class used to use the Graph Hopper's API
+    """GraphHopper API class.
 
-        Attributes
-        ----------
-        url: str
-            The beginning of the url crafted next to recover the data on the API
-        APIkey: str
-            The API key of the user given in a string indispensable to be able to use the API
-            Can be obtained in the GraphHopper's web site
-        prem: bool
-            The information of what type of account the user is using (premium or not), if the user enter "True"
-            the account will be defined as a premium account
-            By default this will be equal to "False" for a non premium account
+    Examples
+    --------
+    >>> from graphh import GraphHopper
+    >>> gh_client = GraphHopper(api_key=YOUR_API_KEY)
+    >>> gh_client.address_to_latlong("Rennes, République")
+    (48.1098593, -1.6787526)
+    >>> latlong_Paris = gh_client.address_to_latlong("Paris")
+    >>> latlong_Madrid = gh_client.address_to_latlong("Madrid")
+    >>> gh_client.distance([latlong_Paris, latlong_Madrid], unit="km")
+    1269.9657
+    >>> gh_client.duration([latlong_Paris, latlong_Madrid], unit="h")
+    11.641364444444443
+    >>> import pprint
+    >>> pprint.pprint(gh_client.route([latlong_Paris, latlong_Madrid]))
+    {'hints': {'visited_nodes.average': '947.0', 'visited_nodes.sum': '947'},
+     'info': {'copyrights': ['GraphHopper', 'OpenStreetMap contributors'],
+              'took': 43},
+     'paths': [{'ascend': 11624.469142794609,
+                'bbox': [-3.778313, 40.412748, 2.346683, 48.878851],
+                'descend': 11026.474138140678,
+                'details': {},
+                'distance': 1269965.7,
+                'instructions': [{'distance': 246.715,
+                                  'heading': 165.02,
+                                  'interval': [0, 2],
+                                  'sign': 0,
+                                  'street_name': 'Rue Blanche',
+                                  'text': 'Continue onto Rue Blanche',
+                                  'time': 67674},
+    ...
     """
     url = "https://graphhopper.com/api/1/"
 
-    def __init__(self, ak, premium = False):
-        self.APIkey = ak
-        self.prem = premium
+    def __init__(self, api_key, premium=False):
+        self.api_key = api_key
+        self.premium = premium
 
-    def url_handle(self, api, l_parameters):
+    def _url_handle(self, api, l_parameters):
         """This function does an url request with given parameters
 
         Parameters
@@ -45,7 +64,7 @@ class GraphHopper(object):
         complete_url = GraphHopper.url + api + "?"
         for p in l_parameters:
             complete_url += "&{}".format(p)
-        complete_url += "&key=" + self.APIkey
+        complete_url += "&key=" + self.api_key
         try:
             fp = urllib.request.urlopen(complete_url)
             result = json.load(fp)
@@ -73,15 +92,17 @@ class GraphHopper(object):
         -------
         dict
             A dictionary containing the matching locations' information,
-            including their geographic coordinates, and the number of ms it took.
+            including their geographic coordinates, and the number of ms it
+            took.
 
         """
-        a = str(unicodedata.normalize('NFKD', str(address)).encode('ascii', 'ignore'))
+        a = str(unicodedata.normalize('NFKD',
+                                      str(address)).encode('ascii', 'ignore'))
         l_param = []
         l_param.append("q={}".format(a.replace(" ", "+")))
         l_param.append("limit={}".format(str(limit)))
         l_param.append("locale={}".format(locale))
-        return self.url_handle("geocode", l_param)
+        return self._url_handle("geocode", l_param)
 
     def reverse_geocode(self, latlong, locale="en"):
         """This function does reverse geocoding.
@@ -91,7 +112,8 @@ class GraphHopper(object):
         ----------
         latlong : tuple
             The geographic coordinates that need to be transformed.
-            The first element is the latitude and the second one is the longitude.
+            The first element is the latitude and the second one is the
+            longitude.
         locale : str, optional
             The language of the answer.
             By default, the answer will be in english.
@@ -108,7 +130,7 @@ class GraphHopper(object):
         CGHError.check_point([latlong], "geocode")
         l_param.append("point={},{}".format(latlong[0], latlong[1]))
         l_param.append("locale={}".format(locale))
-        return self.url_handle("geocode", l_param)
+        return self._url_handle("geocode", l_param)
 
     def route(self, l_latlong , vehicle="car", locale="en",
               calc_points="true", instructions="true",
@@ -120,8 +142,10 @@ class GraphHopper(object):
         l_latlong : tuple list
             The tuple list (latitude, longitude) of the considerated points
         vehicle : str, optional
-            The type of vehicle chosen in the list : ["car", "foot", "bike"] if the acount is not premium
-            And can be chosen in the list : ["small_truck", "truck", "scooter", "hike", "mtb", "racingbike"] if it is
+            The type of vehicle chosen in the list : ["car", "foot", "bike"]
+            if the acount is not premium
+            And can be chosen in the list : ["small_truck", "truck", "scooter",
+            "hike", "mtb", "racingbike"] if it is
         locale : str, optional
             The language of the answer.
             By default, the answer will be in english.
@@ -132,17 +156,22 @@ class GraphHopper(object):
             If instructions should be calculated and returned
             default = true
         points_encoded : boolean, optional
-            If false, the coordinates in point and snapped_waypoints are returned as lists of positions
-            using the order [lon,lat,elevation]. If true, the coordinates will be encoded as a string.
+            If false, the coordinates in point and snapped_waypoints are
+            returned as lists of positions
+            using the order [lon,lat,elevation]. If true, the coordinates will
+            be encoded as a string.
             default = true
         elevation : boolean, optional
-            If true, a third coordinate, the altitude, is included to all positions in the response
+            If true, a third coordinate, the altitude, is included to all
+            positions in the response
 
         Returns
         -------
         dict
-            A dictionary of the matching itinerary containing distance, time, ascend, descend, points (encoded or not),
-            instructions with street name and description what the user has to do in order to follow the route.
+            A dictionary of the matching itinerary containing distance, time,
+            ascend, descend, points (encoded or not),
+            instructions with street name and description what the user has to
+            do in order to follow the route.
         """
         l_param = []
 
@@ -150,7 +179,7 @@ class GraphHopper(object):
         for latlong in l_latlong:
             l_param.append("point={},{}".format(latlong[0], latlong[1]))
 
-        CGHError.check_vehicle(vehicle, self.prem)
+        CGHError.check_vehicle(vehicle, self.premium)
         l_param.append("vehicle={}".format(vehicle))
 
         l_param.append("locale={}".format(locale))
@@ -167,15 +196,17 @@ class GraphHopper(object):
         CGHError.check_boolean(elevation)
         l_param.append("elevation={}".format(elevation.lower()))
 
-        return self.url_handle("route", l_param)
+        return self._url_handle("route", l_param)
 
     def distance(self, l_latlong, unit="m"):
-        """This function give the distance between precised points for a given itinerary
+        """This function give the distance between precised points for a given
+        itinerary
 
         Parameters
         ----------
         l_latlong: list
-            The list of the tuples (latitude, longitude) of the considerated points
+            The list of the tuples (latitude, longitude) of the considerated
+            points
         unit: str
             The unit of the distance returned chosen between "m" and "km"
             By default the unit will be in meters
@@ -192,25 +223,31 @@ class GraphHopper(object):
         elif unit == "km" :
             return (dic["paths"][0]["distance"]) / 1000
 
-    def time(self, l_latlong, vehicle="car", unit="ms"):
-        """This function give the time between precised points for a given itinerary
+    def duration(self, l_latlong, vehicle="car", unit="ms"):
+        """This function give the time between precised points for a given
+        itinerary
 
         Parameters
         ----------
         l_latlong: list
-            The list of the tuples (latitude, longitude) of the considerated points
+            The list of the tuples (latitude, longitude) of the considerated
+            points
         vehicle: str
-            The type of vehicle chosen in the list : ["car", "foot", "bike"] if the acount is not premium
-            And can be chosen in the list : ["small_truck", "truck", "scooter", "hike", "mtb", "racingbike"] if it is
+            The type of vehicle chosen in the list : ["car", "foot", "bike"]
+            if the acount is not premium
+            And can be chosen in the list : ["small_truck", "truck", "scooter",
+            "hike", "mtb", "racingbike"] if it is
             By default the vehicle will be car
         unit: str
-            The unit of the distance returned chosen between "ms", "s", "min" and "h"
+            The unit of the distance returned chosen between "ms", "s", "min"
+            and "h"
             By default the unit will be in milliseconds
 
         Returns
         -------
         float
-            The number of the time for the itinerary for the unit and vehicle chosen
+            The number of the time for the itinerary for the unit and vehicle
+            chosen
         """
         dic = self.route(l_latlong, vehicle, points_encoded="false")
         CGHError.check_unittime(unit)
@@ -234,8 +271,10 @@ class GraphHopper(object):
         Returns
         -------
         tuple
-            A tuple corresponding to the geographic coordinates of the location.
-            The first element is the latitude and the second one is the longitude.
+            A tuple corresponding to the geographic coordinates of the
+            location.
+            The first element is the latitude and the second one is the
+            longitude.
 
         """
         d = self.geocode(address, limit=1)
@@ -244,13 +283,15 @@ class GraphHopper(object):
         return lat, lng
 
     def latlong_to_address(self, latlong):
-        """This function is a simplified version of the reverse geocoding function.
+        """This function is a simplified version of the reverse geocoding
+        function.
 
         Parameters
         ----------
         latlong : tuple
             The geographic coordinates that need to be transformed.
-            The first element is the latitude and the second one is the longitude.
+            The first element is the latitude and the second one is the
+            longitude.
 
         Returns
         -------
@@ -282,12 +323,14 @@ class GraphHopper(object):
         ----------
         latlong : tuple
             The geographic coordinates that need to be transformed.
-            The first element is the latitude and the second one is the longitude.
+            The first element is the latitude and the second one is the
+            longitude.
 
         Returns
         -------
         float
             Elevation of one geographic coordinate couple
         """
-        dict = self.route([latlong,latlong],instructions="false", elevation="true", points_encoded= "false")
+        dict = self.route([latlong,latlong],instructions="false",
+                          elevation="true", points_encoded= "false")
         return dict["paths"][0]["points"]["coordinates"][0][2]

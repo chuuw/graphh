@@ -3,10 +3,10 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Graphh's documentation!
-***********************
+Graphh's documentation
+**********************
 
-Graphh is a module to make GraphHopper API queries easy.
+Graphh is a Python module designed to make GraphHopper API queries easy.
 
 
 Installation
@@ -21,7 +21,7 @@ and next in python: ::
    from graphh import GraphHopper
 
 
-Documentation
+API reference
 =============
 .. autoclass:: graphh.GraphHopper
    :members:
