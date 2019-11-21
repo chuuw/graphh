@@ -1,10 +1,10 @@
-import urllib.request
+# coding: utf-8
 import json
 import unicodedata
 
 from graphh import CGHError
+from urllib.request import urlopen
 from urllib.error import HTTPError
-
 
 class GraphHopper(object):
     """GraphHopper API class.
@@ -74,8 +74,10 @@ class GraphHopper(object):
             complete_url += "&{}".format(p)
         complete_url += "&key=" + self.api_key
         try:
-            fp = urllib.request.urlopen(complete_url)
-            result = json.load(fp)
+            fp = urlopen(complete_url)
+            data = fp.read()
+            encoding = fp.info().get_content_charset('utf-8')
+            result = json.loads(data.decode(encoding))
         except HTTPError as e:
             CGHError.CGHError(e)
         else:
