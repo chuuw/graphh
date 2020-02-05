@@ -5,7 +5,6 @@ import unicodedata
 from graphh import CGHError
 from urllib.request import urlopen
 from urllib.error import HTTPError
-#test
 
 class GraphHopper(object):
     """GraphHopper API class.
