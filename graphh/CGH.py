@@ -1,6 +1,7 @@
 # coding: utf-8
 import json
 import unicodedata
+import warnings
 
 from graphh import CGHError
 from urllib.request import urlopen
@@ -290,6 +291,10 @@ class GraphHopper(object):
         d = self.geocode(address, limit=1)
         lat = d["hits"][0]["point"]["lat"]
         lng = d["hits"][0]["point"]["lng"]
+        if (lat <= 28.62707 and lat >= 28.62706)and(lng <= -80.62087 and lng >= -80.62088):
+            #The default coordinates when the adress is wrong is matching with Cap Canaveral
+            warnings.warn("The coordinates match with Cap Canaveral, Florida\n. It can happen when the function can't find the adress",stacklevel=2)
+
         return lat, lng
 
     def latlong_to_address(self, latlong):
@@ -317,10 +322,21 @@ class GraphHopper(object):
         if "street" in d["hits"][0].keys():
             st = d["hits"][0]["street"]
             l_elem.append(st)
-        pc = d["hits"][0]["postcode"]
-        l_elem.append(pc)
-        c = d["hits"][0]["city"]
-        l_elem.append(c)
+        if 'postcode' in d["hits"][0].keys():
+            pc = d["hits"][0]["postcode"]
+            l_elem.append(pc)
+        if 'city' in d["hits"][0].keys():
+            c = d["hits"][0]["city"]
+            l_elem.append(c)
+        else:
+            n = d["hits"][0]["name"]
+            l_elem.append(n)
+        if 'state' in d["hits"][0].keys():
+            st = d["hits"][0]["state"]
+            l_elem.append(st)
+        if 'country' in  d["hits"][0].keys():
+            c = d["hits"][0]["country"]
+            l_elem.append(c)
         a = ""
         for elt in l_elem:
             a += "{} ".format(elt)
