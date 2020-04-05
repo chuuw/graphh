@@ -1,60 +1,117 @@
-import requests# Le package Requests est recommandé pour une interface client HTTP de niveau supérieur ce qui nous permet de gèrer les demandes get et post aisement
+import requests
 import unicodedata
-import os
-import json
-import numpy# package pour matrix notament pour une presentation simple et utilisation pour l'utilisateur si il a
-import pandas# de meme
-import myCGHError# fichier modifier par rapport a requests et matrix mais pas encore finis en details
+import numpy
+import pandas
+import myCGHError
 
 
-# De plus si il y a des prochaines version de ce code ca sera plus simple et possibilité d'implementer les autres api qui utilise notament les demande post ex: optimization
-# ou encore avec la version payante augmenter le nombre parametre sur route
-
-# ici on utilise requests au lieu urllib.request car: c'est plus simple et plus genaral
-#possibiliter de faire des post avec urllib.request mais plus compliquer
-# de plus pour HTTPError il se trouve aussi dans requests donc tres bien, mais a verifier comment reutiliser le code de GHCerror qui traite les HTTPError
 
 class GraphHopper:
+    """GraphHopper API class.
+
+        Parameters
+        ----------
+         api_key: str
+            API key to be used for queries
+         premium: bool
+            Whether the account corresponding to this key is a premium account
+            or not
+    """
+    """"
+    Examples
+        --------
+        >>> from graphh import GraphHopper
+        >>> gh_client = GraphHopper(api_key=YOUR_API_KEY)
+        >>> gh_client.address_to_latlong("Rennes, République")
+                (48.1098593, -1.6787526)
+        >>> latlong_Paris = gh_client.address_to_latlong("Paris")
+        >>> latlong_Madrid = gh_client.address_to_latlong("Madrid")
+        >>> gh_client.distance([latlong_Paris, latlong_Madrid], unit="km")
+                1269.9657
+        >>> gh_client.duration([latlong_Paris, latlong_Madrid], unit="h")
+                11.641364444444443
+        >>> import pprint
+        >>> pprint.pprint(gh_client.route([latlong_Paris, latlong_Madrid]))
+                {'hints': {'visited_nodes.average': '947.0', 'visited_nodes.sum': '947'},
+                        'info': {'copyrights': ['GraphHopper', 'OpenStreetMap contributors'],
+                            'took': 43},
+                        'paths': [{'ascend': 11624.469142794609,
+                        'bbox': [-3.778313, 40.412748, 2.346683, 48.878851],
+                        'descend': 11026.474138140678,
+                        'details': {},
+                        'distance': 1269965.7,
+                        'instructions': [{'distance': 246.715,
+                                  'heading': 165.02,
+                                  'interval': [0, 2],
+                                  'sign': 0,
+                                  'street_name': 'Rue Blanche',
+                                  'text': 'Continue onto Rue Blanche',
+                                  'time': 67674},
+    ...
+    """
+
 
     url = "https://graphhopper.com/api/1/"
 
     def __init__(self, api_key, premium=False):
-        #ici pourquoi mettre des attribut priver a voir
+
         self.api_key = api_key
         self.premium = premium
 
+
+
     def _url_requests(self, api, data, request="get"):
 
+        """ This function does an url request ( GET or POST) with given parameters
 
-        #Donc ici on a modifier pour q'un utilisateur puisse faire des demande en get ou post puisque graphh le permet
-        #mais par defaut on fais des requets en get
-        # au lieu de l_parametre j'ai mis data qui est un dico qui contient toutes les données exemple pour geocode : data = {points=}
+        Parameters
+        ----------
+        api: str
+            name of the api used
+        data: dict
+            dict of parameters to insert in the url
+
+        Returns
+        -------
+        dict
+            The dictionary return by url request (GET or POST)
+        """
 
         complete_url = GraphHopper.url + api + "?"
 
         if request.upper() == "POST":
             complete_url += "key={}".format(self.api_key)
-            reponse = requests.post(url=complete_url, json=data, headers={'content-type': 'application/json'}) # comment je sais voir doc graphhoper et internet request.post pour ces parametre
-            # peut etre json si bug http error sinon regarder headers du post
+            reponse = requests.post(url=complete_url, json=data,
+                                    headers={'content-type': 'application/json'})
         else:
             data["key"] = self.api_key
-            reponse = requests.get(url=complete_url, params=data)#ici la fonction get du module requests vas construire l'adresse avec les infos dans data et donner la reponse
+            reponse = requests.get(url=complete_url, params=data)
 
-        try: #partie qui gere les erreurs
-            reponse.raise_for_status() # ceci est une fonction qui gere les erreurs, c'est-a-dire que si la requete n'est pas valide il vas resortire error sinon none
+        try:
+            reponse.raise_for_status()
         except requests.exceptions.HTTPError as e:
              myCGHError.CGHError(e)
 
-        return reponse.json() #ici .json() (dans le module requests) permet de lire la reponse et de la transformer en json
+        return reponse.json()
+
 
 
     def _latlong_handle_request(self,l_latlong,request="get"):
-        #l'utilisateur envoie les cordonnée en lattitude et longitude
 
-        #ici c'est une fonction qui changer la latlong car ils doivent etre dans des format specifiques par rapport au demande Get et Post
-        #pour post : il faut envoyer les coordonnées en inversé exemple : [[longitude,lattitude],[longitude,lattitude]], comment je sais voir la doc de graphhopper qui precise
-        #pour get: il faut que les coordonées soit en chaine de caracteres exemple : [ 'longetitude, lattitude' , 'longetitude, lattitude' ]
-        # car en get on construit l'url donc il faut le mettre en chaine de caractere (comme ce qu'il y a dans la version precedente)
+        """" This function changes the format of the coordinates according to the request
+
+        Parameters
+        ----------
+        l_latlong: list
+            The list of list (latitude, longitude) of the considerated points
+        request: str, optional
+            motion of request
+
+        Returns
+        -------
+        list
+            list of the coordinates according to the request
+        """
 
         l_latlong_handle = []
         if request.upper() == "POST":
@@ -64,14 +121,117 @@ class GraphHopper:
             for point in l_latlong:
                 l_latlong_handle.append(','.join([str(latlong) for latlong in point]))
 
-        #pour comprendre : print(l_latlon_handle)
         return l_latlong_handle
 
 
-    def route(self,  l_latlong, request="get", vehicle="car", locale="en", calc_points="true", instructions="true", points_encoded="true", elevation="false"):
-        # ici pour faire une demande il faut creer le data qui est un dico
-        # donc au lieu de faire leur liste on a fais un dico et qui sera generique peut import la demande post ou get
-        # sauf pour les coordonnee que je traite avec une fonction
+
+    def geocode(self, address, limit=1, locale="en"):
+        """This function does geocoding.
+        It transforms a given address into matching geographic coordinates.
+
+        Parameters
+        ----------
+        address : str
+            The address of the location that needs to be transformed.
+        limit : int, optional
+            The number of matching location you would like to get.
+            By default, the function will only return one location.
+        locale : str, optional
+            The language of the answer.
+            By default, the answer will be in english.
+
+        Returns
+        -------
+        dict
+            A dictionary containing the matching locations' information,
+            including their geographic coordinates, and the number of ms it
+            took.
+        """
+
+        a = str(unicodedata.normalize('NFKD',str(address)).encode('ascii', 'ignore'))
+        data = dict()
+        data["q"] = "{}".format(a.replace(" ", "+"))
+        data["limit"] = str(limit)
+        data["locale"] = locale
+        return self._url_requests("geocode", data)
+
+
+
+    def reverse_geocode(self, latlong, locale="en"):
+
+        """This function does reverse geocoding.
+                It transforms given geographic coordinates into matching addresses.
+
+        Parameters
+        ----------
+        latlong : tuple
+            The geographic coordinates that need to be transformed.
+            The first element is the latitude and the second one is the
+            longitude.
+        locale : str, optional
+            The language of the answer.
+            By default, the answer will be in english.
+
+        Returns
+        -------
+        dict
+            A dictionary containing the matching locations' information,
+            including their addresses, and the number of ms it took.
+        """
+
+        data = dict()
+        data["reverse"] = "true"
+        myCGHError.check_point([latlong], "geocode")
+        data["point"] = "{},{}".format(latlong[0], latlong[1])
+        data["locale"] = locale
+        return self._url_requests("geocode", data)
+
+
+
+    def route(self,  l_latlong, request="get", vehicle="car",
+                    locale="en", calc_points="true", instructions="true",
+                    points_encoded="true", elevation="false"):
+
+        """This function give an itinerary between given points
+
+        Parameters
+        ----------
+        l_latlong : list
+            The list of list (latitude, longitude) of the considerated points
+        request: str
+            motion of request
+        vehicle : str, optional
+            The type of vehicle chosen in the list : ["car", "foot", "bike"]
+            if the acount is not premium
+            And can be chosen in the list : ["small_truck", "truck", "scooter",
+            "hike", "mtb", "racingbike"] if it is
+        locale : str, optional
+            The language of the answer.
+            By default, the answer will be in english.
+        calc_points : boolean, optional
+            If the points for the route should be calculated at all.
+            default = true
+        instructions : boolean, optional
+            If instructions should be calculated and returned
+            default = true
+        points_encoded : boolean, optional
+            If false, the coordinates in point and snapped_waypoints are
+            returned as lists of positions
+            using the order [lon,lat,elevation]. If true, the coordinates will
+            be encoded as a string.
+            default = true
+        elevation : boolean, optional
+            If true, a third coordinate, the altitude, is included to all
+            positions in the response
+
+        Returns
+        -------
+        dict
+            A dictionary of the matching itinerary containing distance, time,
+            ascend, descend, points (encoded or not),
+            instructions with street name and description what the user has to
+            do in order to follow the route.
+        """
 
         data = dict()
 
@@ -82,7 +242,6 @@ class GraphHopper:
         myCGHError.check_vehicle(vehicle, self.premium)
         data["vehicle"] = vehicle
 
-        #manque un check pour locale on peut en creer un
         data["locale"] = locale
 
         myCGHError.check_boolean(calc_points)
@@ -99,39 +258,42 @@ class GraphHopper:
 
         return self._url_requests("route", data, request)
 
-    def geocode(self, address, limit=1, locale="en"):
-        #ici pareil on a fais un dico et que demande en get car y a pas post pour geocode
-        #on peut rajouter un fournisseur mais a voir si on rajoute
 
-        a = str(unicodedata.normalize('NFKD',str(address)).encode('ascii', 'ignore'))
+
+    def matrix_request(self, l_from_points, l_to_points,request="get",
+                    vehicle="car",fail_fast="false"):
+
+        """This function gives the different possible matrix
+            between the points: distance, temp, weight
+
+        Parameters
+        ----------
+        l_from_points : list
+        The list of list (latitude, longitude) of the starting points for the routes
+        l_to_points : list
+            The tuple list (latitude, longitude) of the destination points for the routes
+        request: str
+            motion of request
+        vehicle : str, optional
+            The type of vehicle chosen in the list : ["car", "foot", "bike"]
+            if the acount is not premium
+            And can be chosen in the list : ["small_truck", "truck", "scooter",
+            "hike", "mtb", "racingbike"] if it is
+        fail_fast : str
+            a gerer
+
+        Returns
+        -------
+        dict
+            A dictionary containing distances, times and weights matrices
+        """
+
         data = dict()
-        data["q"] = "{}".format(a.replace(" ", "+"))
-        data["limit"] = str(limit)
-        data["locale"] = locale
-        return self._url_requests("geocode", data)
 
-
-    def reverse_geocode(self, latlong, locale="en"):
-        #ici pareil
-        data = dict()
-        data["reverse"] = "true"
-        myCGHError.check_point([latlong], "geocode")
-        data["point"] = "{},{}".format(latlong[0], latlong[1])
-        data["locale"] = locale
-        return self._url_requests("geocode", data)
-
-
-
-    def matrix(self, l_from_points, l_to_points, vehicle="car",request="get",fail_fast="true"):
-
-        data = dict()
-        #faire un check mais vas falloir changé le code GHC error, c-a-d on aura ca :
-        #CGHError.check_point(l_latlong, "matrix")
-
+        #myCGHError.check_point(l_latlong, "matrix")
         l_from_points_handle = self._latlong_handle_request(l_from_points, request)
         l_to_points_handle = self._latlong_handle_request(l_to_points, request)
 
-        #ici on gere le faite que se soit une matice  par emple 1*3 ou 3*1, juste qui change c'est un "s" de point car sinon message error
         if (request.upper() == "GET") and (len(l_from_points) == 1 or len(l_to_points) == 1):
             data["from_point"] = l_from_points_handle
             data["to_point"] = l_to_points_handle
@@ -142,7 +304,6 @@ class GraphHopper:
         myCGHError.check_vehicle(vehicle, self.premium)
         data["vehicle"] = vehicle
 
-        # ici demande de matrix en post ou get , out_arrays sera toujours ses valeurs :
         data["out_arrays"] = ["distances", "times", "weights"]
 
         myCGHError.check_boolean(fail_fast.lower())
@@ -151,67 +312,106 @@ class GraphHopper:
         return self._url_requests("matrix", data, request)
 
 
-    def matrix_numpy(self,l_from_points, l_to_points, out_array):
-        myCGHError.check_out_array(out_array) #voir le fichier myGHCError
-        # avec le module numpy
-        dic = self.matrix(l_from_points, l_to_points)
-        matrix = numpy.array(dic[out_array])
-        return matrix
 
-    def matrix_pandas(self,l_from_points, l_to_points, out_array):
+    def maxtrix(self,l_from_address, l_to_address,out_array, format="default", vehicle="car", request="get"):
 
-        # avec pandas, on peut faire aussi avec numpy pour faciliter le code
+        """This function gives one matrix between the points: distances, times or weights
+
+        Parameters
+        ----------
+        l_from_address : list
+            The list containing the cities, address of the points
+        l_to_address : list
+            The list containing the cities, address of the points
+        request: str
+            motion of request
+        vehicle : str, optional
+            The type of vehicle chosen in the list : ["car", "foot", "bike"]
+            if the acount is not premium
+            And can be chosen in the list : ["small_truck", "truck", "scooter",
+            "hike", "mtb", "racingbike"] if it is
+
+        Returns
+        -------
+        3 possibilities :
+            data frame
+                A data frame  with for names columns the address for l_to_address e
+                and names rows the address for l_from_address and data of matrix
+            array
+                A array data of the function matrix
+            list
+                A list of list data of the function matrix
+        """
+
         myCGHError.check_out_array(out_array)
-        dic = self.matrix(l_from_points, l_to_points)
-        matrix = dic[out_array]
-        data = dict()
-        for i in range(len(l_to_points)):
-            data[str(l_to_points[i])] = matrix[i]
-        for val in l_from_points:
-            str(val)
-        dataframe = pandas.DataFrame(data, index=l_from_points)
-        return dataframe
+        l_from_points = list()
+        l_to_points = list()
 
-    def matrix_liste(self, l_from_points, l_to_points, out_array):
+        for (start, destination) in zip(l_from_address, l_to_address):
+            l_from_points.append(self.address_to_latlong(start))
+            l_to_points.append(self.address_to_latlong(destination))
 
         myCGHError.check_out_array(out_array)
+        dic = self.matrix_request(l_from_points, l_to_points, vehicle=vehicle, request=request)
 
-        #sans le module numpy
-        dic = self.matrix(l_from_points, l_to_points)
-        matrix = dic[out_array]
-        print(matrix)
-        # on a essayer de faire une affichage fait maisson sans module
-        self.affichagematrix(l_from_points, l_to_points, matrix)
-        return matrix
-
-    def affichagematrix(self, l_from_points, l_to_points, matrix):
-        chaine = ""
-        villedepart = ""
-        cpt = 0
-        for ville in l_from_points:
-            villedepart += "\t{}".format(ville)
-
-        chaine += villedepart+"\n"
-
-        while cpt != len(matrix):
-            liste = matrix[cpt]
-            val = '\t'.join(str(elem) for elem in liste)
-            chaine += "{}\t{}\n".format(l_to_points[cpt], val)
-            cpt += 1
-
-        print(chaine)
+        # myCGHError.check_format_matrix (format)
+        if format.lower() == "pandas":
+            matrix = numpy.array(dic[out_array])
+            dataframe = pandas.DataFrame(matrix, index=l_from_address, columns=l_to_address)
+            return dataframe
+        elif format.lower() == "numpy":
+            matrix = numpy.array(dic[out_array])
+            return matrix
+        else:
+            matrix = dic[out_array]
+            return matrix
 
 
-    # pour le reste fonction inchanger :
 
     def address_to_latlong(self, address):
+
+        """This function is a simplified version of the geocoding function.
+
+        Parameters
+        ----------
+        address : str
+            The address of the location that needs to be transformed.
+
+        Returns
+        -------
+        tuple
+            A tuple corresponding to the geographic coordinates of the
+            location.
+            The first element is the latitude and the second one is the
+            longitude.
+        """
+
         d = self.geocode(address, limit=1)
         lat = d["hits"][0]["point"]["lat"]
         lng = d["hits"][0]["point"]["lng"]
+        if (lat <= 28.62707 and lat >= 28.62706) and (lng <= -80.62087 and lng >= -80.62088):
+            warnings.warn("The coordinates match with Cap Canaveral, Florida\n.It can happen when the function can't find the adress",stacklevel=2)
         return lat, lng
 
 
     def latlong_to_address(self, latlong):
+
+        """This function is a simplified version of the reverse geocoding
+            function.
+
+        Parameters
+        ----------
+        latlong : tuple
+            The geographic coordinates that need to be transformed.
+            The first element is the latitude and the second one is the
+            longitude.
+
+        Returns
+        -------
+        str
+            The address of the location.
+        """
+
         d = self.reverse_geocode(latlong)
         l_elem = []
         if "housenumber" in d["hits"][0].keys():
@@ -220,16 +420,49 @@ class GraphHopper:
         if "street" in d["hits"][0].keys():
             st = d["hits"][0]["street"]
             l_elem.append(st)
-        pc = d["hits"][0]["postcode"]
-        l_elem.append(pc)
-        c = d["hits"][0]["city"]
-        l_elem.append(c)
+        if 'postcode' in d["hits"][0].keys():
+            pc = d["hits"][0]["postcode"]
+            c = d["hits"][0]["city"]
+            l_elem.append(pc)
+            l_elem.append(c)
+        if 'city' in d["hits"][0].keys():
+            c = d["hits"][0]["city"]
+            l_elem.append(c)
+        else:
+            n = d["hits"][0]["name"]
+            l_elem.append(n)
+        if 'state' in d["hits"][0].keys():
+            st = d["hits"][0]["state"]
+            l_elem.append(st)
+        if 'country' in d["hits"][0].keys():
+            c = d["hits"][0]["country"]
+            l_elem.append(c)
         a = ""
         for elt in l_elem:
             a += "{} ".format(elt)
         return a.strip()
 
+
     def distance(self, l_latlong, unit="m"):
+
+        """This function give the distance between precised points for a given
+                itinerary
+
+        Parameters
+        ----------
+        l_latlong: list
+            The list of the tuples (latitude, longitude) of the considerated
+            points
+        unit: str
+            The unit of the distance returned chosen between "m" and "km"
+            By default the unit will be in meters
+
+        Returns
+        -------
+        float
+            The number of the distance for the itinerary for the unit chosen
+        """
+
         dic = self.route(l_latlong, points_encoded="flase")
         myCGHError.check_unitdistance(unit)
         if unit == "m":
@@ -237,7 +470,36 @@ class GraphHopper:
         elif unit == "km":
             return (dic["paths"][0]["distance"]) / 1000
 
+
+
     def duration(self, l_latlong, vehicle="car", unit="ms"):
+
+        """This function give the time between precised points for a given
+                itinerary
+
+        Parameters
+        ----------
+        l_latlong: list
+            The list of the tuples (latitude, longitude) of the considerated
+            points
+        vehicle: str
+            The type of vehicle chosen in the list : ["car", "foot", "bike"]
+            if the acount is not premium
+            And can be chosen in the list : ["small_truck", "truck", "scooter",
+            "hike", "mtb", "racingbike"] if it is
+            By default the vehicle will be car
+        unit: str
+            The unit of the distance returned chosen between "ms", "s", "min"
+            and "h"
+            By default the unit will be in milliseconds
+
+        Returns
+        -------
+        float
+            The number of the time for the itinerary for the unit and vehicle
+            chosen
+        """
+
         dic = self.route(l_latlong, vehicle, points_encoded="false")
         myCGHError.check_unittime(unit)
         if unit == "ms":
@@ -249,42 +511,24 @@ class GraphHopper:
         elif unit == "h":
             return (((dic["paths"][0]["time"]) / 1000) / 60) / 60
 
+    def elevation_point(self, latlong):
 
+        """This function give an elevation for a given geographic coordinates
 
-#programme pricipale
+        Parameters
+        ----------
+        latlong : tuple
+            The geographic coordinates that need to be transformed.
+            The first element is the latitude and the second one is the
+            longitude.
 
-# recuperer ma key :
-dossier = "data"
-fichier = "credentials.json"
-chemin = os.path.join(dossier, fichier)
-fp = open(chemin, "r", encoding="utf8")
-dico = json.load(fp)
-key = dico.get("GraphHopper", None)
-monObjet = GraphHopper(api_key=key)
+        Returns
+        -------
+        float
+            Elevation of one geographic coordinate couple
+        """
 
-#Les tests :
+        dict = self.route([latlong, latlong], instructions="false",
+                          elevation="true", points_encoded="false")
+        return dict["paths"][0]["points"]["coordinates"][0][2]
 
-# print(monObjet.route([(48.1113387, 2.3309152144131775), (48.1113387, -1.6800198)]),)
-# print(monObjet.route([(48.1113387, 2.3309152144131775), (48.1113387, -1.6800198)], "POST"))
-#
-# print(monObjet.reverse_geocode([48.878743, 2.3309152144131775]))
-# print(monObjet.address_to_latlong("Rennes"))
-# print(monObjet.latlong_to_address([48.878743, 2.3309152144131775]))
-# print(monObjet.distance([[48.878743, 2.3309152144131775], [48.1113387, -1.6800198]]))
-# print(monObjet.duration([[48.878743, 2.3309152144131775], [48.1113387, -1.6800198]]))
-
-
-
-#Pour matrix :
-list_from_points = [(48.978743, 2.3309152144131775), (48.5113387, -1.6800198), (48.1113387, -1.6800198)]
-list_to_points = [(48.978743, 2.3309152144131775), (48.5113387, -1.6800198), (48.1113387, -1.6800198)]
-
-
-# print(monObjet.matrix(list_from_points, list_to_points))
-# print(monObjet.matrix(list_from_points, list_to_points, request="POST"))
-#
-# print(monObjet.matrix_numpy(list_from_points, list_to_points, "distances"))
-print(monObjet.matrix_pandas(list_from_points, list_to_points, "distances"))
-# print(monObjet.reverse_geocode([51.512882367963456,-0.09576559066772462]))
-#
-# print(monObjet.matrixliste(list_from_points, list_to_points, "distances"))
