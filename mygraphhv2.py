@@ -1,7 +1,9 @@
 import requests
 import unicodedata
-import numpy
 import pandas
+import numpy
+import json
+import warnings
 import myCGHError
 
 
@@ -126,6 +128,7 @@ class GraphHopper:
 
 
     def geocode(self, address, limit=1, locale="en"):
+
         """This function does geocoding.
         It transforms a given address into matching geographic coordinates.
 
@@ -261,7 +264,7 @@ class GraphHopper:
 
 
     def matrix_request(self, l_from_points, l_to_points,request="get",
-                    vehicle="car",fail_fast="false"):
+                    vehicle="car"):
 
         """This function gives the different possible matrix
             between the points: distance, temp, weight
@@ -279,9 +282,6 @@ class GraphHopper:
             if the acount is not premium
             And can be chosen in the list : ["small_truck", "truck", "scooter",
             "hike", "mtb", "racingbike"] if it is
-        fail_fast : str
-            a gerer
-
         Returns
         -------
         dict
@@ -290,7 +290,8 @@ class GraphHopper:
 
         data = dict()
 
-        #myCGHError.check_point(l_latlong, "matrix")
+        myCGHError.check_point(l_from_points, "matrix")
+        myCGHError.check_point(l_to_points, "matrix")
         l_from_points_handle = self._latlong_handle_request(l_from_points, request)
         l_to_points_handle = self._latlong_handle_request(l_to_points, request)
 
@@ -305,9 +306,6 @@ class GraphHopper:
         data["vehicle"] = vehicle
 
         data["out_arrays"] = ["distances", "times", "weights"]
-
-        myCGHError.check_boolean(fail_fast.lower())
-        data["fail_fast"] = fail_fast.lower()
 
         return self._url_requests("matrix", data, request)
 
@@ -334,16 +332,17 @@ class GraphHopper:
         Returns
         -------
         3 possibilities :
-            data frame
+            dataframe : data frame
                 A data frame  with for names columns the address for l_to_address e
                 and names rows the address for l_from_address and data of matrix
-            array
+            matrix : array
                 A array data of the function matrix
-            list
+            liste : list
                 A list of list data of the function matrix
         """
 
         myCGHError.check_out_array(out_array)
+        myCGHError.check_format_matrix(format)
         l_from_points = list()
         l_to_points = list()
 
@@ -351,10 +350,8 @@ class GraphHopper:
             l_from_points.append(self.address_to_latlong(start))
             l_to_points.append(self.address_to_latlong(destination))
 
-        myCGHError.check_out_array(out_array)
         dic = self.matrix_request(l_from_points, l_to_points, vehicle=vehicle, request=request)
 
-        # myCGHError.check_format_matrix (format)
         if format.lower() == "pandas":
             matrix = numpy.array(dic[out_array])
             dataframe = pandas.DataFrame(matrix, index=l_from_address, columns=l_to_address)
@@ -363,8 +360,8 @@ class GraphHopper:
             matrix = numpy.array(dic[out_array])
             return matrix
         else:
-            matrix = dic[out_array]
-            return matrix
+            liste = dic[out_array]
+            return liste
 
 
 
@@ -389,7 +386,7 @@ class GraphHopper:
         d = self.geocode(address, limit=1)
         lat = d["hits"][0]["point"]["lat"]
         lng = d["hits"][0]["point"]["lng"]
-        if (lat <= 28.62707 and lat >= 28.62706) and (lng <= -80.62087 and lng >= -80.62088):
+        if abs(lat - 28.62707) < 0.0001 and abs(lng + 80.62087) < 0.0001 :
             warnings.warn("The coordinates match with Cap Canaveral, Florida\n.It can happen when the function can't find the adress",stacklevel=2)
         return lat, lng
 
