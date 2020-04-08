@@ -1,7 +1,6 @@
 import requests
 
 def check_point(l_latlong, api):
-    #du coup ici il faudra changer par rapport a matrix on peut faire mieux
     if len(l_latlong) == 0:
         raise ValueError("You must specify at least point")
 
@@ -52,7 +51,6 @@ def check_boolean(arg):
         raise ValueError("{} is not valid, must be 'true'or 'false'".format(arg))
 
 
-# ici changer par rapport au module requests
 def CGHError(e):
     if e.response.status_code == 400:
       e = str(e.response.status_code)+" Invalid argument : " + APIKeyRemaining(e) + " remaining credits"
@@ -70,7 +68,7 @@ def CGHError(e):
       e = str(e.response.status_code)+" Vehicle error : " + APIKeyRemaining(e) + " remaining credits"
       raise requests.exceptions.HTTPError(e)
 
-#ici changer car par rapport au module requests dont le headers est un dico
+
 def APIKeyRemaining(error):
     header = error.response.headers
     cpt = header['X-RateLimit-Remaining']
@@ -78,6 +76,12 @@ def APIKeyRemaining(error):
 
 def check_out_array(arg):
     l_out_array = ["distances", "times", "weights"]
+    if not arg in l_out_array:
+        e = ValueError("{} is not a valid arguments, must be in the list : {}".format(arg, l_out_array))
+        raise e
+
+def check_format_matrix(arg):
+    l_out_array = ["pandas", "numpy", "default"]
     if not arg in l_out_array:
         e = ValueError("{} is not a valid arguments, must be in the list : {}".format(arg, l_out_array))
         raise e
