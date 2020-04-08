@@ -1,5 +1,10 @@
+import requests
+
 def check_point(l_latlong, api):
-    if len(list(l_latlong)) < 2 and api != "geocode":
+    if len(l_latlong) == 0:
+        raise ValueError("You must specify at least point")
+
+    if len(l_latlong) < 2 and api != "geocode":
         raise ValueError("You must specify at least 2 points")
     for point in l_latlong:
         try:
@@ -45,25 +50,38 @@ def check_boolean(arg):
     if arg not in ["true","false"]:
         raise ValueError("{} is not valid, must be 'true'or 'false'".format(arg))
 
+
 def CGHError(e):
-    if e.code == 400:
-      e.msg= "Invalid argument : " + APIKeyRemaining(e) + " remaining credits"
-      raise e
-    elif e.code == 401:
-      e.msg= "Key error"
-      raise e
-    elif e.code == 429:
-      e.msg= "API limit reached"
-      raise e
-    elif e.code == 500:
-      e.msg= "Internal server error : " + APIKeyRemaining(e) + " remaining credits"
-      raise e
-    elif e.code == 501:
-      e.msg = "Vehicle error : " + APIKeyRemaining(e) + " remaining credits"
-      raise e
+    if e.response.status_code == 400:
+      e = str(e.response.status_code)+" Invalid argument : " + APIKeyRemaining(e) + " remaining credits"
+      raise requests.exceptions.HTTPError(e)
+    elif e.response.status_code == 401:
+      e = str(e.response.status_code)+" Key error"
+      raise requests.exceptions.HTTPError(e)
+    elif e.response.status_code == 429:
+      e = str(e.response.status_code)+" API limit reached"
+      raise requests.exceptions.HTTPError(e)
+    elif e.response.status_code == 500:
+      e = str(e.response.status_code)+" Internal server error : " + APIKeyRemaining(e) + " remaining credits"
+      raise requests.exceptions.HTTPError(e)
+    elif e.response.status_code == 501:
+      e = str(e.response.status_code)+" Vehicle error : " + APIKeyRemaining(e) + " remaining credits"
+      raise requests.exceptions.HTTPError(e)
 
 
 def APIKeyRemaining(error):
-  header = str(error.headers).replace("\n", " ").split(" ")
-  indice = header.index("X-RateLimit-Remaining:")
-  return header[indice+1]
+    header = error.response.headers
+    cpt = header['X-RateLimit-Remaining']
+    return cpt
+
+def check_out_array(arg):
+    l_out_array = ["distances", "times", "weights"]
+    if not arg in l_out_array:
+        e = ValueError("{} is not a valid arguments, must be in the list : {}".format(arg, l_out_array))
+        raise e
+
+def check_format_matrix(arg):
+    l_out_array = ["pandas", "numpy", "default"]
+    if not arg in l_out_array:
+        e = ValueError("{} is not a valid arguments, must be in the list : {}".format(arg, l_out_array))
+        raise e
