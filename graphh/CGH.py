@@ -65,9 +65,9 @@ class GraphHopper:
             name of the api used
         data: dict
             dict of parameters to insert in the url
-        requests: str, optional
-            The type of request : GET or POST
-            By default, the request will be in GET
+        request: str, optional
+            Type of request : GET or POST
+            By default, the request will be GET
 
         Returns
         -------
@@ -88,7 +88,7 @@ class GraphHopper:
         try:
             reponse.raise_for_status()
         except requests.exceptions.HTTPError as e:
-             myCGHError.CGHError(e)
+             CGHError.CGHError(e)
 
         return reponse.json()
 
@@ -100,10 +100,10 @@ class GraphHopper:
         Parameters
         ----------
         l_latlong: list
-            The list of list (latitude, longitude) of the considerated points
-        requests: str, optional
-            The type of request : GET or POST
-            By default, the request will be in GET
+            Tuple list  (latitude, longitude) of the considerated points
+        request: str, optional
+            Type of request : GET or POST
+            By default, the request will be GET
 
         Returns
         -------
@@ -175,7 +175,7 @@ class GraphHopper:
         """
         data = dict()
         data["reverse"] = "true"
-        myCGHError.check_point([latlong], "geocode")
+        CGHError.check_point([latlong], "geocode")
         data["point"] = "{},{}".format(latlong[0], latlong[1])
         data["locale"] = locale
         return self._url_requests("geocode", data)
@@ -189,10 +189,10 @@ class GraphHopper:
         Parameters
         ----------
         l_latlong : list
-            The list of list (latitude, longitude) of the considerated points
-        requests: str, optional
-            The type of request : GET or POST
-            By default, the request will be in GET
+            Tuple list  (latitude, longitude) of the considerated points
+        request: str, optional
+            Type of request : GET or POST
+            By default, the request will be GET
         vehicle : str, optional
             The type of vehicle chosen in the list : ["car", "foot", "bike"]
             if the acount is not premium
@@ -227,25 +227,25 @@ class GraphHopper:
         """
         data = dict()
 
-        myCGHError.check_point(l_latlong, "route")
+        CGHError.check_point(l_latlong, "route")
         l_latlong_handle = self._latlong_handle_request(l_latlong, request)
         data["points"] = l_latlong_handle
 
-        myCGHError.check_vehicle(vehicle, self.premium)
+        CGHError.check_vehicle(vehicle, self.premium)
         data["vehicle"] = vehicle
 
         data["locale"] = locale
 
-        myCGHError.check_boolean(calc_points)
+        CGHError.check_boolean(calc_points)
         data["calc_points"] = calc_points
 
-        myCGHError.check_boolean(instructions)
+        CGHError.check_boolean(instructions)
         data["instructions"] = instructions
 
-        myCGHError.check_boolean(points_encoded)
+        CGHError.check_boolean(points_encoded)
         data["points_encoded"] = points_encoded
 
-        myCGHError.check_boolean(elevation)
+        CGHError.check_boolean(elevation)
         data["elevation"] = elevation
 
         return self._url_requests("route", data, request)
@@ -260,12 +260,12 @@ class GraphHopper:
         Parameters
         ----------
         l_from_points : list
-        The list of list (latitude, longitude) of the starting points for the routes
+            Tuple list  (latitude, longitude) of the starting points for the routes
         l_to_points : list
-            The tuple list (latitude, longitude) of the destination points for the routes
-        requests: str, optional
-            The type of request : GET or POST
-            By default, the request will be in GET
+            Tuple list (latitude, longitude) of the destination points for the routes
+        request: str, optional
+            Type of request : GET or POST
+            By default, the request will be GET
         vehicle : str, optional
             The type of vehicle chosen in the list : ["car", "foot", "bike"]
             if the acount is not premium
@@ -278,8 +278,8 @@ class GraphHopper:
         """
         data = dict()
 
-        myCGHError.check_point(l_from_points, "matrix")
-        myCGHError.check_point(l_to_points, "matrix")
+        CGHError.check_point(l_from_points, "matrix")
+        CGHError.check_point(l_to_points, "matrix")
         l_from_points_handle = self._latlong_handle_request(l_from_points, request)
         l_to_points_handle = self._latlong_handle_request(l_to_points, request)
 
@@ -290,7 +290,7 @@ class GraphHopper:
             data["from_points"] = l_from_points_handle
             data["to_points"] = l_to_points_handle
 
-        myCGHError.check_vehicle(vehicle, self.premium)
+        CGHError.check_vehicle(vehicle, self.premium)
         data["vehicle"] = vehicle
 
         data["out_arrays"] = ["distances", "times", "weights"]
@@ -315,41 +315,43 @@ class GraphHopper:
             it can differ for different vehicles or versions of this API
         format: str, optional
             Specifies how the array should be drawn from the list ["pandas","numpy","default"]
-            By default, the array is default        
+            By default, the array is values "default"       
         vehicle : str, optional
             The type of vehicle chosen in the list : ["car", "foot", "bike"]
             if the acount is not premium
             And can be chosen in the list : ["small_truck", "truck", "scooter",
             "hike", "mtb", "racingbike"] if it is
-        requests: str, optional
-            The type of request : GET or POST
-            By default, the request will be in GET
+        request: str, optional
+            Type of request : GET or POST
+            By default, the request will be GET
 
         Returns
         -------
         3 possibilities :
             dataframe : data frame
-                A data frame  with for names columns the address for l_to_address e
+                A data frame  with for names columns the address for l_to_address
                 and names rows the address for l_from_address and data of matrix
             matrix : array
                 A array data of the function matrix
-            liste : list
-                A list of list data of the function matrix
+            list : list
+                A list of data list of the function matrix
         """
-        myCGHError.check_out_array(out_array)
-        myCGHError.check_format_matrix(format)
+        CGHError.check_dim(len(l_from_address), len(l_to_address), self.premium)
+        CGHError.check_out_array(out_array)
+        CGHError.check_format_matrix(format)
         l_from_points = list()
         l_to_points = list()
 
-        for (start, destination) in zip(l_from_address, l_to_address):
+        for start in l_from_address:
             l_from_points.append(self.address_to_latlong(start))
+        for destination in l_to_address:
             l_to_points.append(self.address_to_latlong(destination))
 
         dic = self.matrix_request(l_from_points, l_to_points, vehicle=vehicle, request=request)
 
         if format.lower() == "pandas":
             matrix = numpy.array(dic[out_array])
-            dataframe = pandas.DataFrame(matrix, index=l_from_address, columns=l_to_address)
+            dataframe = pandas.DataFrame(matrix.reshape(len(l_from_address), len(l_to_address)), index=l_from_address, columns=l_to_address)
             return dataframe
         elif format.lower() == "numpy":
             matrix = numpy.array(dic[out_array])
@@ -379,7 +381,7 @@ class GraphHopper:
         lat = d["hits"][0]["point"]["lat"]
         lng = d["hits"][0]["point"]["lng"]
         if abs(lat - 28.62707) < 0.0001 and abs(lng + 80.62087) < 0.0001 :
-            warnings.warn("The coordinates match with Cap Canaveral, Florida\n.It can happen when the function can't find the adress",stacklevel=2)
+            warnings.warn("The coordinates match with Cap Canaveral, Florida\n.It can happen when the function can't find the adress. Try adding more informations to your adress, like state or country.",stacklevel=2)
         return lat, lng
 
 
@@ -431,7 +433,7 @@ class GraphHopper:
 
 
     def distance(self, l_latlong, unit="m"):
-        """This function give the distance between precised points for a given
+        """This function gives the distance between precised points for a given
                 itinerary
 
         Parameters
@@ -449,7 +451,7 @@ class GraphHopper:
             The number of the distance for the itinerary for the unit chosen
         """
         dic = self.route(l_latlong, points_encoded="flase")
-        myCGHError.check_unitdistance(unit)
+        CGHError.check_unitdistance(unit)
         if unit == "m":
             return dic["paths"][0]["distance"]
         elif unit == "km":
@@ -484,7 +486,7 @@ class GraphHopper:
             chosen
         """
         dic = self.route(l_latlong, vehicle, points_encoded="false")
-        myCGHError.check_unittime(unit)
+        CGHError.check_unittime(unit)
         if unit == "ms":
             return dic["paths"][0]["time"]
         elif unit == "s":
