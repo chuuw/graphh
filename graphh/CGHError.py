@@ -4,7 +4,7 @@ def check_point(l_latlong, api):
     if len(l_latlong) == 0:
         raise ValueError("You must specify at least point")
 
-    if len(l_latlong) < 2 and api != "geocode":
+    if len(l_latlong) < 2 and (api != "geocode" and api != "matrix"):
         raise ValueError("You must specify at least 2 points")
     for point in l_latlong:
         try:
@@ -84,4 +84,9 @@ def check_format_matrix(arg):
     l_out_array = ["pandas", "numpy", "default"]
     if not arg in l_out_array:
         e = ValueError("{} is not a valid arguments, must be in the list : {}".format(arg, l_out_array))
+        raise e
+        
+ def check_dim(arg1, arg2, prem):
+    if (prem == False) and (arg1 > 5 or arg2 > 5):
+        e = ValueError("Sorry you are not premium, you can only put 5 cities")
         raise e
