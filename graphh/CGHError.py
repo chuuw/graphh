@@ -90,3 +90,7 @@ def check_format_matrix(arg):
     if (prem == False) and (arg1 > 5 or arg2 > 5):
         e = ValueError("Sorry you are not premium, you can only put 5 cities")
         raise e
+        
+  def check_package(package_imported, module):
+    if not package_imported:
+        raise ImportError("{} was not imported correctly.".format(module))
