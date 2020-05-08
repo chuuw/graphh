@@ -1,7 +1,5 @@
 import requests
 import unicodedata
-import pandas
-import numpy
 import json
 import warnings
 from graphh import CGHError
@@ -57,7 +55,7 @@ class GraphHopper:
         self.premium = premium
 
     def _url_requests(self, api, data, request="get"):
-        """ This function does an url request ( GET or POST) with given parameters
+        """ This function does an url request (GET or POST) with given parameters
 
         Parameters
         ----------
@@ -299,7 +297,7 @@ class GraphHopper:
 
 
 
-    def maxtrix(self,l_from_address, l_to_address,out_array, format="default", vehicle="car", request="get"):
+    def matrix(self,l_from_address, l_to_address,out_array, format="default", vehicle="car", request="get"):
         """This function gives one matrix between the points: distances, times or weights
 
         Parameters
@@ -350,16 +348,78 @@ class GraphHopper:
         dic = self.matrix_request(l_from_points, l_to_points, vehicle=vehicle, request=request)
 
         if format.lower() == "pandas":
-            matrix = numpy.array(dic[out_array])
-            dataframe = pandas.DataFrame(matrix.reshape(len(l_from_address), len(l_to_address)), index=l_from_address, columns=l_to_address)
-            return dataframe
+            return self.matrix_pandas(dic, out_array, l_from_address, l_to_address)
         elif format.lower() == "numpy":
-            matrix = numpy.array(dic[out_array])
+            matrix = self.matrix_numpy(dic, out_array)
             return matrix
         else:
             liste = dic[out_array]
             return liste
+         
+    def matrix_pandas(self, dic, out_array, l_from_address, l_to_address):
+       """This function gives a dataframe between the points: distances, times or weights
 
+        Parameters
+        ----------
+        dic: dictionary 
+            A dictionary containing distances, times and weights matrices         
+        out_array: str
+            Specifies which array should be included in the response from the list ["distances", "times", "weights"]
+            The units of the entries of distances are meters, 
+            of times are seconds and of weights is arbitrary and
+            it can differ for different vehicles or versions of this API
+        l_from_address : list
+            The list containing the cities, address of the points
+        l_to_address : list
+            The list containing the cities, address of the points     
+       
+        Returns
+        -------
+            dataframe : data frame
+                A data frame  with for names columns the address for l_to_address
+                and names rows the address for l_from_address and data of matrix
+        """
+        try:
+            import pandas
+            import numpy
+            matrix = numpy.array(dic[out_array])
+            dataframe = pandas.DataFrame(matrix.reshape(len(l_from_address), len(l_to_address)), index=l_from_address,
+                                         columns=l_to_address)
+        except ImportError:
+            pandas_imported = False
+            numpy_imported = False
+            CGHError.check_package(pandas_imported, "pandas")
+            CGHError.check_package(numpy_imported, "numpy")
+        else:
+            return dataframe
+
+    def matrix_numpy(self, dic, out_array):
+      """This function gives a matrix (numpy) between the points: distances, times or weights
+
+        Parameters
+        ----------
+        dic: dictionary 
+            A dictionary containing distances, times and weights matrices         
+        out_array: str
+            Specifies which array should be included in the response from the list ["distances", "times", "weights"]
+            The units of the entries of distances are meters, 
+            of times are seconds and of weights is arbitrary and
+            it can differ for different vehicles or versions of this API     
+       
+        Returns
+        -------
+            dataframe : data frame
+                A data frame  with for names columns the address for l_to_address
+                and names rows the address for l_from_address and data of matrix
+        """
+        try:
+            import numpy
+            matrix = numpy.array(dic[out_array])
+        except ImportError:
+            numpy_imported = False
+            CGHError.check_package(numpy_imported, "numpy")
+        else:
+            return matrix
 
     def address_to_latlong(self, address):
         """This function is a simplified version of the geocoding function.
