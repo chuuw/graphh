@@ -357,7 +357,7 @@ class GraphHopper:
             return liste
          
     def matrix_pandas(self, dic, out_array, l_from_address, l_to_address):
-       """This function gives a dataframe between the points: distances, times or weights
+        """This function gives a dataframe between the points: distances, times or weights
 
         Parameters
         ----------
@@ -394,7 +394,7 @@ class GraphHopper:
             return dataframe
 
     def matrix_numpy(self, dic, out_array):
-      """This function gives a matrix (numpy) between the points: distances, times or weights
+        """This function gives a matrix (numpy) between the points: distances, times or weights
 
         Parameters
         ----------
