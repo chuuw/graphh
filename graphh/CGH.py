@@ -7,8 +7,9 @@ from graphh import CGHError
 
 
 class GraphHopper:
-   """GraphHopper API class.
-
+    """
+    GraphHopper API class.
+    
     Parameters
     ----------
      api_key: str
