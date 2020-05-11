@@ -85,12 +85,12 @@ def check_format_matrix(arg):
     if not arg in l_out_array:
         e = ValueError("{} is not a valid arguments, must be in the list : {}".format(arg, l_out_array))
         raise e
-        
- def check_dim(arg1, arg2, prem):
+
+def check_dim(arg1, arg2, prem):
     if (prem == False) and (arg1 > 5 or arg2 > 5):
         e = ValueError("Sorry you are not premium, you can only put 5 cities")
         raise e
         
-  def check_package(package_imported, module):
+def check_package(package_imported, module):
     if not package_imported:
         raise ImportError("{} was not imported correctly.".format(module))
