@@ -45,8 +45,7 @@ class GraphHopper:
                                   'sign': 0,
                                   'street_name': 'Rue Blanche',
                                   'text': 'Continue onto Rue Blanche',
-                                  'time': 67674},
-    ...
+                                  'time': 67674}, ...
     """
     url = "https://graphhopper.com/api/1/"
 
