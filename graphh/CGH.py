@@ -510,7 +510,7 @@ class GraphHopper:
         float
             The number of the distance for the itinerary for the unit chosen
         """
-        dic = self.route(l_latlong, points_encoded="flase")
+        dic = self.route(l_latlong, points_encoded="false")
         CGHError.check_unitdistance(unit)
         if unit == "m":
             return dic["paths"][0]["distance"]
