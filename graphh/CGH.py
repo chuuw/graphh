@@ -24,8 +24,8 @@ class GraphHopper:
     >>> gh_client = GraphHopper(api_key=YOUR_API_KEY)
     >>> gh_client.address_to_latlong("Rennes, République")
     (48.1098593, -1.6787526)
-    >>> latlong_Paris = gh_client.address_to_latlong("Paris")
-    >>> latlong_Madrid = gh_client.address_to_latlong("Madrid")
+    >>> latlong_Paris = gh_client.address_to_latlong("Paris, France")
+    >>> latlong_Madrid = gh_client.address_to_latlong("Madrid, Spain")
     >>> gh_client.distance([latlong_Paris, latlong_Madrid], unit="km")
     1269.9657
     >>> gh_client.duration([latlong_Paris, latlong_Madrid], unit="h")
