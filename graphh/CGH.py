@@ -535,9 +535,9 @@ class GraphHopper:
             "hike", "mtb", "racingbike"] if it is
             By default the vehicle will be car
         unit: str
-            The unit of the distance returned chosen between "ms", "s", "min"
+            The unit of the duration returned chosen between "ms", "s", "min"
             and "h"
-            By default the unit will be in milliseconds
+            By default the unit will be milliseconds
 
         Returns
         -------
