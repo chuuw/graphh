@@ -187,13 +187,13 @@ class GraphHopper:
         Parameters
         ----------
         l_latlong : list
-            Tuple list  (latitude, longitude) of the considerated points
+            Tuple list  (latitude, longitude) of the considered points
         request: str, optional
             Type of request : GET or POST
             By default, the request will be GET
         vehicle : str, optional
             The type of vehicle chosen in the list : ["car", "foot", "bike"]
-            if the acount is not premium
+            if the account is not premium
             And can be chosen in the list : ["small_truck", "truck", "scooter",
             "hike", "mtb", "racingbike"] if it is
         locale : str, optional
@@ -545,7 +545,7 @@ class GraphHopper:
             The number of the time for the itinerary for the unit and vehicle
             chosen
         """
-        dic = self.route(l_latlong, vehicle, points_encoded="false")
+        dic = self.route(l_latlong, vehicle=vehicle, points_encoded="false")
         CGHError.check_unittime(unit)
         if unit == "ms":
             return dic["paths"][0]["time"]
